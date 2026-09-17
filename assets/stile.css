@@ -1,0 +1,603 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Console SB · foglio di stile
+
+   Linguaggio visivo: vetro su fondo profondo. Pannelli traslucidi che
+   galleggiano sopra un fondale caldo, bordo interno chiaro a simulare
+   il rifrangere della luce sul bordo, ombre tinte col colore del
+   marchio invece che nere.
+
+   Nota onesta: il "Liquid Glass" di Apple esiste solo sulle sue
+   piattaforme. Questa è un'approssimazione per il web fatta con
+   backdrop-filter, bordi stratificati e riflessi. Con
+   prefers-reduced-transparency i pannelli diventano pieni.
+
+   Raggi: 20px sui pannelli che galleggiano, 12px sui blocchi interni,
+   999px su tutto ciò che si clicca. Nessuna eccezione.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root{
+  --fondo:#0e1013;
+  --velo:rgba(255,255,255,.055);
+  --velo-alto:rgba(255,255,255,.085);
+  --bordo:rgba(255,255,255,.10);
+  --bordo-vivo:rgba(255,255,255,.18);
+  --ink:#f4f2ef;
+  --testo:#bdb8b0;
+  --tenue:#8b867e;
+  --accento:#ef8b52;
+  --accento-scuro:#c4622d;
+  --accento-velo:rgba(239,139,82,.14);
+  --buono:#57c390;
+  --attesa:#e0ad48;
+  --fuori:#f0806b;
+  --buono-velo:rgba(87,195,144,.14);
+  --attesa-velo:rgba(224,173,72,.14);
+  --fuori-velo:rgba(240,128,107,.15);
+  --griglia:rgba(255,255,255,.07);
+  --r-g:20px;   /* pannelli galleggianti */
+  --r-b:12px;   /* blocchi interni */
+  --ombra:0 18px 50px rgba(8,6,4,.55), 0 2px 8px rgba(8,6,4,.35);
+  --luce:inset 0 1px 0 rgba(255,255,255,.14), inset 0 -1px 0 rgba(255,255,255,.04);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;color:var(--ink);background:var(--fondo);
+  font-family:'Geist','Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  font-size:13.5px;line-height:1.5;-webkit-font-smoothing:antialiased;
+}
+
+/* ── fondale: caldo, profondo, immobile ── */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(70% 55% at 12% 6%, rgba(196,98,45,.34), transparent 62%),
+    radial-gradient(55% 45% at 88% 12%, rgba(120,72,40,.26), transparent 66%),
+    radial-gradient(60% 50% at 70% 96%, rgba(60,90,84,.18), transparent 70%),
+    linear-gradient(170deg, #16181d 0%, #0e1013 46%, #0b0d10 100%);
+}
+/* grana finissima, ferma, non cattura il puntatore */
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'>\
+<filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/>\
+<feColorMatrix type='saturate' values='0'/></filter>\
+<rect width='140' height='140' filter='url(%23g)' opacity='.22'/></svg>");
+}
+
+.num{font-family:'Geist Mono',ui-monospace,SFMono-Regular,monospace;font-variant-numeric:tabular-nums}
+.ico{
+  font-family:'Material Symbols Outlined';font-weight:400;font-style:normal;line-height:1;
+  letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;
+  -webkit-font-feature-settings:'liga';font-feature-settings:'liga';vertical-align:middle;
+}
+::selection{background:var(--accento);color:#13100d}
+
+/* ── il vetro ── */
+.vetro{
+  background:linear-gradient(150deg, rgba(255,255,255,.085), rgba(255,255,255,.028) 46%, rgba(255,255,255,.05));
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+  border:1px solid var(--bordo);
+  box-shadow:var(--ombra), var(--luce);
+  border-radius:var(--r-g);
+}
+/* La lastra è il vetro senza sfocatura: stessa materia, ma per i
+   pannelli molto alti, dove sfocare costerebbe fluidità allo scorrimento. */
+.lastra{
+  background:linear-gradient(170deg, rgba(30,34,40,.86), rgba(22,25,30,.9));
+  border:1px solid var(--bordo);
+  box-shadow:var(--ombra), var(--luce);
+  border-radius:var(--r-g);
+}
+@media (prefers-reduced-transparency:reduce){
+  .vetro,.lastra{background:#1b1e23;backdrop-filter:none;-webkit-backdrop-filter:none}
+}
+
+/* ═══ impianto ═══ */
+.telaio{display:grid;grid-template-columns:312px 1fr;gap:18px;padding:18px;min-height:100dvh;align-items:start}
+@media(max-width:1020px){.telaio{grid-template-columns:1fr}}
+
+/* ═══ flotta ═══ */
+.flotta{position:sticky;top:18px;max-height:calc(100dvh - 36px);display:flex;flex-direction:column;overflow:hidden}
+/* Su iPad in verticale la flotta sta sopra al dossier: se prende tutto
+   lo schermo si apre su un elenco invece che sulla console. */
+@media(max-width:1020px){
+  .flotta{position:static;max-height:none}
+  .lista{max-height:264px}
+}
+
+.insegna{padding:20px 22px 17px;border-bottom:1px solid var(--bordo)}
+.insegna .riga{display:flex;align-items:center;gap:11px}
+.insegna .sigla{
+  width:36px;height:36px;border-radius:999px;flex:0 0 auto;display:grid;place-items:center;
+  font-size:12.5px;font-weight:700;letter-spacing:.4px;color:#fff;
+  background:linear-gradient(145deg,#e8834a,#b4551f);
+  box-shadow:0 6px 18px rgba(196,98,45,.45), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.insegna .nome{font-size:16.5px;font-weight:600;letter-spacing:-.25px}
+.insegna .nome span{color:var(--tenue);font-weight:500}
+.insegna .chi{font-size:11.5px;color:var(--tenue);margin-top:11px;display:flex;align-items:center;gap:6px}
+.insegna .chi .ico{font-size:15px}
+
+.polso{display:flex;gap:3px;padding:16px 22px 0}
+.polso i{height:6px;flex:1;border-radius:999px;background:rgba(255,255,255,.14)}
+.polso i.buono{background:var(--buono);box-shadow:0 0 10px rgba(87,195,144,.45)}
+.polso i.attesa{background:var(--attesa);box-shadow:0 0 10px rgba(224,173,72,.45)}
+.polso i.fuori{background:var(--fuori);box-shadow:0 0 10px rgba(240,128,107,.5)}
+.polso-dida{padding:9px 22px 0;font-size:11.5px;color:var(--tenue)}
+.polso-dida b{color:var(--ink);font-weight:600}
+
+.setaccio{padding:15px 22px 0;position:relative}
+.setaccio .ico{position:absolute;left:33px;top:26px;font-size:17px;color:var(--tenue);pointer-events:none}
+.setaccio input{
+  width:100%;padding:9px 13px 9px 36px;font:inherit;font-size:12.5px;color:var(--ink);
+  background:var(--velo);border:1px solid var(--bordo);border-radius:999px;
+  transition:border-color .18s, background .18s;
+}
+.setaccio input::placeholder{color:var(--tenue)}
+.setaccio input:hover{background:var(--velo-alto)}
+.setaccio input:focus{outline:none;border-color:var(--accento);background:var(--velo-alto)}
+
+.filtri{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:13px 22px 14px}
+.filtri button{
+  font:inherit;font-size:11.5px;font-weight:600;padding:6px 12px;border-radius:999px;cursor:pointer;
+  text-align:center;
+  background:transparent;border:1px solid transparent;color:var(--testo);transition:all .18s;
+}
+.filtri button:hover{color:var(--ink);background:var(--velo)}
+.filtri button[aria-pressed="true"]{
+  background:var(--accento-velo);border-color:rgba(239,139,82,.42);color:var(--accento);
+}
+.filtri button:focus-visible{outline:2px solid var(--accento);outline-offset:2px}
+
+.lista{overflow-y:auto;flex:1;padding:4px 12px 14px;scrollbar-width:thin}
+.riga-locale{
+  display:grid;grid-template-columns:22px 1fr auto;gap:12px;align-items:center;width:100%;
+  padding:11px 12px;margin-bottom:3px;border:1px solid transparent;border-radius:var(--r-b);
+  background:transparent;font:inherit;text-align:left;cursor:pointer;color:inherit;
+  transition:background .18s, border-color .18s, transform .18s;
+}
+.riga-locale:hover{background:var(--velo);transform:translateX(2px)}
+.riga-locale[aria-current="true"]{
+  background:linear-gradient(120deg, rgba(239,139,82,.18), rgba(239,139,82,.06));
+  border-color:rgba(239,139,82,.38);
+}
+.riga-locale:focus-visible{outline:2px solid var(--accento);outline-offset:1px}
+.riga-locale .n1{display:block;font-weight:600;font-size:13px;line-height:1.25}
+.riga-locale .n2{display:block;font-size:11px;color:var(--tenue);margin-top:2px}
+.riga-locale .spia{font-size:19px}
+.riga-locale .quanti{
+  font-size:11px;font-weight:700;color:var(--fuori);background:var(--fuori-velo);
+  min-width:22px;height:22px;border-radius:999px;display:grid;place-items:center;
+}
+.vuoto{padding:26px 22px;color:var(--tenue);font-size:12.5px}
+.avviso{margin:0;padding:13px 22px 17px;border-top:1px solid var(--bordo);
+  font-size:10.5px;line-height:1.5;color:var(--tenue)}
+
+/* ═══ stati ═══ */
+.buono{color:var(--buono)} .attesa{color:var(--attesa)} .fuori{color:var(--fuori)}
+.targa{
+  display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.7px;
+  text-transform:uppercase;padding:5px 12px;border-radius:999px;white-space:nowrap;
+  border:1px solid transparent;
+}
+.targa .ico{font-size:15px}
+.targa.buono{background:var(--buono-velo);border-color:rgba(87,195,144,.3)}
+.targa.attesa{background:var(--attesa-velo);border-color:rgba(224,173,72,.3)}
+.targa.fuori{background:var(--fuori-velo);border-color:rgba(240,128,107,.32)}
+.targa.spenta{background:var(--velo);color:var(--tenue);border-color:var(--bordo)}
+
+/* ═══ dossier ═══ */
+.dossier{min-width:0;display:grid;gap:18px}
+
+.banda{position:relative;min-height:268px;overflow:hidden;border-radius:var(--r-g);
+  border:1px solid var(--bordo);box-shadow:var(--ombra)}
+/* Niente fotografie di repertorio: la testata è materia, non stock.
+   L'angolo dei gradienti cambia con il locale, la famiglia di colore no. */
+.banda .materia{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(80% 120% at 88% 10%, rgba(224,124,64,.34), transparent 58%),
+    radial-gradient(60% 90% at 62% 96%, rgba(70,104,96,.3), transparent 62%),
+    linear-gradient(var(--g), #24262c, #15171b 62%);
+}
+.banda .materia::before{
+  content:"";position:absolute;inset:0;opacity:.5;
+  background:repeating-linear-gradient(var(--g), rgba(255,255,255,.05) 0 1px, transparent 1px 13px);
+  mask-image:linear-gradient(100deg, transparent 34%, #000 100%);
+  -webkit-mask-image:linear-gradient(100deg, transparent 34%, #000 100%);
+}
+.banda .monogramma{
+  position:absolute;right:4%;bottom:-16%;font-size:210px;font-weight:700;letter-spacing:-8px;
+  color:rgba(255,255,255,.05);line-height:1;user-select:none;
+}
+.banda::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(95deg, rgba(14,16,19,.94) 26%, rgba(14,16,19,.62) 58%, rgba(14,16,19,.2) 100%);
+}
+.banda .sopra{position:absolute;inset:0;padding:26px 30px;display:flex;flex-direction:column;justify-content:flex-end;z-index:2}
+.banda h1{font-size:34px;font-weight:600;letter-spacing:-.9px;margin:0 0 7px;line-height:1.02}
+.banda .sotto{font-size:12.5px;color:var(--testo);max-width:72ch}
+.banda .sotto b{color:var(--ink);font-weight:600}
+/* I tre numeri che Simone guarda per primi, già nella testata */
+.banda .cifre{display:flex;gap:9px;margin-top:16px;flex-wrap:wrap}
+.banda .cifra{display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:999px}
+.banda .cifra b{font-size:17px;font-weight:600;letter-spacing:-.3px}
+.banda .cifra i{font-style:normal;font-size:10.5px;line-height:1.3;color:var(--tenue)}
+.banda .angolo{position:absolute;top:22px;right:24px;z-index:2;display:flex;align-items:center;gap:12px}
+.sigillo{
+  display:flex;align-items:center;gap:10px;font-size:10.5px;color:var(--testo);text-align:right;
+  padding:7px 8px 7px 15px;border-radius:999px;
+  background:rgba(255,255,255,.07);border:1px solid var(--bordo);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+}
+.sigillo .disco{
+  width:36px;height:36px;border-radius:999px;display:grid;place-items:center;font-size:11.5px;
+  font-weight:700;letter-spacing:.5px;color:#fff;
+  background:linear-gradient(145deg,#e8834a,#b4551f);
+  box-shadow:0 5px 16px rgba(196,98,45,.5), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.sigillo .disco.spento{background:rgba(255,255,255,.07);color:var(--tenue);box-shadow:none;border:1px solid var(--bordo)}
+
+.linguette{display:flex;gap:6px;padding:9px;overflow-x:auto;scrollbar-width:none}
+.linguette::-webkit-scrollbar{display:none}
+.linguette button{
+  flex:0 0 auto;
+  font:inherit;font-size:12.5px;font-weight:600;padding:9px 15px;border:1px solid transparent;
+  border-radius:999px;background:transparent;color:var(--tenue);cursor:pointer;white-space:nowrap;
+  display:flex;align-items:center;gap:7px;transition:all .18s;
+}
+.linguette button .ico{font-size:17px}
+.linguette button:hover{color:var(--ink);background:var(--velo)}
+.linguette button[aria-selected="true"]{
+  color:var(--ink);background:var(--velo-alto);border-color:var(--bordo-vivo);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16);
+}
+.linguette button:focus-visible{outline:2px solid var(--accento);outline-offset:2px}
+
+.area{padding:26px 30px 30px}
+.tit{font-size:10.5px;letter-spacing:1.9px;text-transform:uppercase;color:var(--tenue);font-weight:600;margin:0 0 14px}
+.tit.staccato{margin-top:32px}
+
+/* ═══ numeri ═══ */
+.numeri{display:grid;grid-template-columns:repeat(auto-fit,minmax(152px,1fr));gap:10px}
+.numeri .cella{
+  background:var(--velo);border:1px solid var(--bordo);border-radius:var(--r-b);padding:15px 17px;
+  transition:background .18s, border-color .18s, transform .18s;
+}
+.numeri .cella.clic{cursor:pointer}
+.numeri .cella.clic:hover{background:var(--velo-alto);transform:translateY(-2px)}
+.numeri .cella[aria-current="true"]{border-color:rgba(239,139,82,.45);background:var(--accento-velo)}
+.numeri small{display:block;font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:var(--tenue);font-weight:600;margin-bottom:9px}
+.numeri b{font-size:23px;font-weight:600;display:block;line-height:1;letter-spacing:-.6px}
+.numeri span{font-size:11.5px;color:var(--tenue);display:block;margin-top:7px}
+
+/* ═══ tabelle ═══ */
+.tabella{background:var(--velo);border:1px solid var(--bordo);border-radius:var(--r-b);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{
+  text-align:left;font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--tenue);
+  font-weight:600;padding:12px 16px;border-bottom:1px solid var(--bordo);white-space:nowrap;
+  background:rgba(255,255,255,.03);
+}
+th.d,td.d{text-align:right}
+td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.055);color:var(--testo)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr{transition:background .15s}
+tbody tr:hover td{background:rgba(255,255,255,.035)}
+td b{color:var(--ink);font-weight:600}
+
+/* ═══ diagnosi ═══ */
+.diagnosi{
+  border-radius:var(--r-g);overflow:hidden;margin-bottom:22px;
+  background:linear-gradient(150deg, rgba(240,128,107,.10), rgba(255,255,255,.03) 42%);
+  border:1px solid rgba(240,128,107,.26);
+  box-shadow:0 16px 44px rgba(10,6,4,.5), var(--luce);
+}
+.diagnosi.sereno{background:linear-gradient(150deg, rgba(87,195,144,.10), rgba(255,255,255,.03) 42%);
+  border-color:rgba(87,195,144,.26)}
+.diagnosi .capo{padding:24px 26px;border-bottom:1px solid var(--bordo)}
+.diagnosi .capo h2{font-size:19px;font-weight:600;margin:0 0 8px;letter-spacing:-.3px}
+.diagnosi .capo p{margin:0;font-size:13.5px;color:var(--testo);max-width:80ch;line-height:1.6}
+.conto{display:flex;align-items:baseline;gap:13px;margin-bottom:14px;flex-wrap:wrap}
+.conto .grande{font-size:40px;font-weight:600;letter-spacing:-1.6px;line-height:1}
+.conto .via{font-size:13px;color:var(--tenue)}
+
+.cause{display:grid;gap:10px;padding:18px 26px 22px}
+.causa{
+  display:grid;grid-template-columns:82px 1fr;gap:20px;padding:18px 20px;
+  background:var(--velo);border:1px solid var(--bordo);border-radius:var(--r-b);
+  transition:background .18s, border-color .18s;
+}
+.causa:hover{background:var(--velo-alto);border-color:var(--bordo-vivo)}
+@media(max-width:780px){.causa{grid-template-columns:1fr;gap:10px}}
+.causa .peso{text-align:right}
+.causa .peso b{display:block;font-size:24px;font-weight:600;color:var(--fuori);line-height:1;letter-spacing:-.8px}
+.causa .peso span{display:block;font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--tenue);margin-top:5px}
+.causa h3{margin:0 0 6px;font-size:14.5px;font-weight:600;letter-spacing:-.1px}
+.causa .dett{margin:0 0 11px;font-size:12.5px;color:var(--testo);line-height:1.6;max-width:82ch}
+.causa .prova{font-size:11.5px;color:var(--tenue);display:flex;gap:7px;align-items:flex-start;margin-bottom:11px}
+.causa .prova .ico{font-size:15px;margin-top:1px}
+.causa .mossa{
+  font-size:12.5px;line-height:1.6;color:var(--ink);max-width:82ch;
+  background:var(--accento-velo);border:1px solid rgba(239,139,82,.28);
+  border-radius:var(--r-b);padding:11px 14px;
+}
+.causa .mossa b{
+  color:var(--accento);font-weight:700;letter-spacing:1.1px;font-size:9.5px;
+  text-transform:uppercase;display:flex;align-items:center;gap:6px;margin-bottom:5px;
+}
+.causa .mossa b .ico{font-size:14px}
+
+.prove{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:0 26px 26px}
+@media(max-width:920px){.prove{grid-template-columns:1fr}}
+.prove h4{font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tenue);font-weight:600;margin:0 0 10px}
+
+/* ═══ grafico ═══ */
+.tavola{background:var(--velo);border:1px solid var(--bordo);border-radius:var(--r-b);padding:20px 22px 14px;margin-bottom:24px}
+.tavola h3{margin:0 0 4px;font-size:16px;font-weight:600;letter-spacing:-.2px}
+.tavola p{margin:0 0 16px;font-size:12px;color:var(--tenue)}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.legenda{display:flex;gap:22px;flex-wrap:wrap;font-size:11.5px;color:var(--tenue);margin-top:14px}
+.legenda i{display:inline-block;width:15px;height:2px;background:var(--ink);vertical-align:middle;margin-right:8px;border-radius:999px}
+.legenda .fascia i{height:11px;background:var(--buono-velo);border:1px solid var(--buono);border-radius:3px}
+.legenda .att i{height:0;border-top:2px dashed var(--buono);background:none}
+.bolla{
+  position:fixed;pointer-events:none;font-size:11.5px;padding:8px 12px;border-radius:999px;
+  opacity:0;transition:opacity .14s;z-index:40;color:var(--ink);
+  background:rgba(38,42,48,.85);border:1px solid var(--bordo-vivo);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:0 10px 26px rgba(0,0,0,.45);
+}
+
+/* ═══ confronto ═══ */
+.barre{display:grid;gap:9px}
+.barra{display:grid;grid-template-columns:138px 1fr 62px;gap:14px;align-items:center;font-size:12.5px;color:var(--testo)}
+.traccia{height:12px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden}
+.riempi{height:100%;background:rgba(255,255,255,.22);border-radius:999px}
+.barra.io .riempi{background:linear-gradient(90deg,#c4622d,#ef8b52);box-shadow:0 0 16px rgba(239,139,82,.4)}
+.barra.io span:first-child{color:var(--ink);font-weight:700}
+
+/* ═══ settimana ═══ */
+.settimana{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.giorno{background:var(--velo);border:1px solid var(--bordo);border-radius:var(--r-b);padding:13px 9px;text-align:center}
+.giorno .g{font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:var(--tenue);font-weight:600}
+.giorno .p{font-size:20px;font-weight:600;margin-top:7px;letter-spacing:-.5px}
+.giorno .c{font-size:10.5px;color:var(--tenue);margin-top:4px}
+.giorno.troppo{border-color:rgba(224,173,72,.35);background:var(--attesa-velo)}
+.giorno.troppo .p{color:var(--attesa)}
+
+/* ═══ dotazione ═══ */
+.pezzi{display:grid;gap:9px}
+.pezzo{
+  display:grid;grid-template-columns:38px 1fr auto;gap:15px;align-items:start;padding:15px 17px;
+  background:var(--velo);border:1px solid var(--bordo);border-radius:var(--r-b);transition:background .18s;
+}
+.pezzo:hover{background:var(--velo-alto)}
+.pezzo > .ico{
+  font-size:19px;color:var(--accento);width:38px;height:38px;border-radius:999px;
+  display:grid;place-items:center;background:var(--accento-velo);
+}
+.pezzo.spento > .ico{color:var(--tenue);background:var(--velo)}
+.pezzo .t{display:block;font-size:13.5px;font-weight:600}
+.pezzo .produce{display:grid;gap:5px;margin-top:10px;padding-top:10px;border-top:1px solid var(--bordo)}
+.pezzo .produce .voce{display:grid;grid-template-columns:16px 1fr;gap:8px;align-items:start;
+  font-size:11.5px;color:var(--testo);line-height:1.5}
+.pezzo .produce .ico{font-size:14px;color:var(--tenue);margin-top:2px}
+.pezzo .produce em{font-style:normal;color:var(--tenue);text-transform:uppercase;letter-spacing:1px;
+  font-size:9.5px;white-space:nowrap;margin-left:4px}
+.pezzo.spento .produce{opacity:.62}
+.pezzo .d{display:block;font-size:11.5px;color:var(--tenue);margin-top:3px;max-width:70ch}
+
+/* ═══ storia ═══ */
+.storia{border-left:1px solid var(--bordo);padding-left:24px;display:grid;gap:22px;margin-left:6px}
+.tappa{position:relative}
+.tappa::before{
+  content:"";position:absolute;left:-29px;top:6px;width:9px;height:9px;border-radius:999px;
+  background:rgba(255,255,255,.22);border:2px solid #14161a;
+}
+.tappa.chiave::before{background:var(--accento);box-shadow:0 0 12px rgba(239,139,82,.6)}
+.tappa .q{font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--tenue);font-weight:600}
+.tappa .t{font-size:14.5px;font-weight:600;margin:5px 0 6px;letter-spacing:-.1px}
+.tappa .d{font-size:12.5px;color:var(--testo);line-height:1.65;max-width:80ch}
+
+.nota-piccola{font-size:11.5px;color:var(--tenue);margin-top:14px;max-width:80ch;line-height:1.6}
+
+/* ═══ movimento: solo all'ingresso e sul passaggio del puntatore ═══ */
+@media (prefers-reduced-motion:no-preference){
+  .dossier > *{animation:sali .42s cubic-bezier(.16,1,.3,1) both}
+  .dossier > *:nth-child(2){animation-delay:.05s}
+  .dossier > *:nth-child(3){animation-delay:.09s}
+  @keyframes sali{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+}
+
+/* ═══ quadranti della diagnosi ═══
+   Una corona per parametro: fascia verde dove il numero dovrebbe stare,
+   tacca sul valore atteso, arco spesso su quello di oggi. Si clicca. */
+.capo-quadranti{margin-bottom:16px}
+.capo-quadranti .tit{margin-bottom:6px}
+.capo-quadranti .nota-piccola{margin:0}
+
+.quadranti{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:12px;margin-bottom:26px}
+.quadrante{
+  position:relative;display:flex;flex-direction:column;align-items:center;gap:0;
+  padding:16px 12px 14px;border-radius:var(--r-b);cursor:pointer;font:inherit;color:inherit;
+  background:var(--velo);border:1px solid var(--bordo);
+  transition:background .18s, border-color .18s, transform .18s;
+}
+.quadrante:hover{background:var(--velo-alto);transform:translateY(-2px)}
+.quadrante:focus-visible{outline:2px solid var(--accento);outline-offset:2px}
+.quadrante.aperto{border-color:rgba(239,139,82,.5);background:var(--accento-velo)}
+.quadrante.aperto::after{
+  content:"";position:absolute;left:50%;bottom:-13px;width:12px;height:12px;margin-left:-6px;
+  background:var(--accento-velo);border-left:1px solid rgba(239,139,82,.5);
+  border-top:1px solid rgba(239,139,82,.5);transform:rotate(45deg);
+}
+.quadrante svg{width:118px;height:118px;display:block}
+.quadrante .pista{fill:none;stroke:rgba(255,255,255,.09);stroke-width:9;stroke-linecap:round}
+.quadrante .fascia{fill:none;stroke:rgba(87,195,144,.3);stroke-width:9;stroke-linecap:butt}
+.quadrante .tacca{stroke:rgba(255,255,255,.55);stroke-width:1.5}
+.quadrante .limite{stroke:var(--buono);stroke-width:2;opacity:.85}
+.quadrante .valore{fill:none;stroke-width:5;stroke-linecap:round}
+.quadrante.buono .valore{stroke:var(--buono)}  .quadrante.buono .punta{fill:var(--buono)}
+.quadrante.attesa .valore{stroke:var(--attesa)} .quadrante.attesa .punta{fill:var(--attesa)}
+.quadrante.fuori .valore{stroke:var(--fuori)}   .quadrante.fuori .punta{fill:var(--fuori)}
+.quadrante .punta{stroke:none}
+.quadrante .dentro{
+  position:absolute;top:16px;left:0;right:0;height:118px;
+  display:grid;place-items:center;pointer-events:none;
+}
+.quadrante .dentro b{font-size:22px;font-weight:600;letter-spacing:-.7px;line-height:1}
+.quadrante.buono .dentro b{color:var(--buono)}
+.quadrante.attesa .dentro b{color:var(--attesa)}
+.quadrante.fuori .dentro b{color:var(--fuori)}
+.quadrante .nome{font-size:12.5px;font-weight:600;margin-top:6px;text-align:center;line-height:1.25}
+.quadrante .atteso{font-size:10.5px;color:var(--tenue);margin-top:3px}
+.quadrante .verdetto{
+  display:inline-flex;align-items:center;gap:5px;margin-top:9px;
+  font-size:10px;letter-spacing:.9px;text-transform:uppercase;font-weight:600;color:var(--tenue);
+}
+.quadrante .verdetto .ico{font-size:14px}
+.quadrante.buono .verdetto{color:var(--buono)}
+.quadrante.attesa .verdetto{color:var(--attesa)}
+.quadrante.fuori .verdetto{color:var(--fuori)}
+
+/* variante del pannello per i parametri solo da guardare */
+.diagnosi.attenzione{background:linear-gradient(150deg, rgba(224,173,72,.12), rgba(255,255,255,.03) 42%);
+  border-color:rgba(224,173,72,.26)}
+
+/* ═══ da dove arriva il numero ═══ */
+.sorgenti{margin-top:22px;padding:20px 22px;border:1px solid var(--bordo);border-radius:var(--r-b);background:var(--velo)}
+.sorgenti h4{display:flex;align-items:center;gap:8px;margin:0 0 14px;
+  font-size:10.5px;letter-spacing:1.9px;text-transform:uppercase;color:var(--tenue);font-weight:600}
+.sorgenti h4 .ico{font-size:16px}
+.flussi{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.flusso{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start}
+.flusso > .ico{
+  width:34px;height:34px;border-radius:999px;display:grid;place-items:center;font-size:18px;
+  background:var(--accento-velo);color:var(--accento);
+}
+.flusso b{display:block;font-size:13px;font-weight:600}
+.flusso .fr{display:block;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--tenue);margin-top:3px}
+.flusso p{margin:7px 0 0;font-size:12px;color:var(--testo);line-height:1.5}
+
+/* ═══ misure grezze, richiudibili ═══ */
+.misure{margin-top:18px;border:1px solid var(--bordo);border-radius:var(--r-b);background:var(--velo);overflow:hidden}
+.misure summary{
+  display:flex;align-items:center;gap:9px;padding:14px 20px;cursor:pointer;list-style:none;
+  font-size:12.5px;font-weight:600;transition:background .18s;
+}
+.misure summary::-webkit-details-marker{display:none}
+.misure summary:hover{background:var(--velo-alto)}
+.misure summary .ico{font-size:17px;color:var(--tenue)}
+.misure summary .quante{margin-left:auto;font-size:10.5px;color:var(--tenue);font-weight:500}
+.misure[open] summary{border-bottom:1px solid var(--bordo)}
+.dentro-misure{padding:18px 20px 20px;display:grid;gap:22px}
+.dentro-misure .nota-piccola{margin-top:9px}
+
+/* ═══ grafici a barre ═══
+   Una riga per voce: etichetta, barra, numero in chiaro. Le barre
+   appaiate confrontano due misure della stessa unità; quando c'è una
+   colonna di giudizio, è il giudizio a colorare la barra. */
+.grafico h4{margin:0 0 5px;font-size:13.5px;font-weight:600;letter-spacing:-.2px}
+.nota-g{margin:0 0 4px;font-size:11.5px;color:var(--tenue);line-height:1.5;max-width:82ch}
+.legenda-g{display:flex;gap:16px;margin:10px 0 14px;font-size:11px;color:var(--tenue)}
+.legenda-g span{display:inline-flex;align-items:center;gap:6px}
+.legenda-g i{width:14px;height:6px;border-radius:999px;background:var(--accento)}
+.legenda-g .nota{margin-left:auto;font-size:10px;font-style:italic}
+.legenda-g i.b{background:rgba(255,255,255,.22)}
+.legenda-g i.tacca{width:3px;height:13px;border-radius:2px;background:rgba(255,255,255,.8)}
+.legenda-g .buono i{background:var(--buono)}
+.legenda-g .attesa i{background:var(--attesa)}
+.legenda-g .fuori i{background:var(--fuori)}
+
+.righe-g{display:grid;gap:3px;margin-top:12px}
+.riga-g{
+  display:grid;grid-template-columns:minmax(96px,168px) 1fr auto;
+  gap:4px 14px;align-items:center;padding:7px 10px;border-radius:9px;
+  transition:background .16s;
+}
+.riga-g:hover{background:var(--velo)}
+.riga-g .etic{font-size:12.5px;font-weight:600;line-height:1.25}
+.riga-g.seq .etic{font-weight:500;color:var(--testo)}
+.canne{position:relative;display:grid;gap:3px;min-width:60px;
+  background:rgba(255,255,255,.05);border-radius:999px}
+.asta{
+  display:block;height:11px;border-radius:0 999px 999px 0;min-width:3px;
+  background:linear-gradient(90deg, rgba(239,139,82,.55), var(--accento));
+}
+.asta.ok{background:linear-gradient(90deg, rgba(87,195,144,.45), var(--buono))}
+.asta.ko{background:linear-gradient(90deg, rgba(240,128,107,.45), var(--fuori))}
+/* la tacca del riferimento: teorico, atteso, previsto */
+.rif{
+  position:absolute;top:-3px;bottom:-3px;width:3px;margin-left:-1px;border-radius:2px;
+  background:rgba(255,255,255,.85);box-shadow:0 0 0 2px rgba(14,16,19,.55);
+}
+.asta.buono {background:linear-gradient(90deg, rgba(87,195,144,.5), var(--buono))}
+.asta.attesa{background:linear-gradient(90deg, rgba(224,173,72,.5), var(--attesa))}
+.asta.fuori {background:linear-gradient(90deg, rgba(240,128,107,.5), var(--fuori))}
+.riga-g .val{font-size:13px;font-weight:600;text-align:right;white-space:nowrap}
+.riga-g .coda{
+  grid-column:2 / -1;display:flex;flex-wrap:wrap;align-items:center;gap:14px;
+  font-size:10.5px;color:var(--tenue);margin-top:1px;
+}
+.riga-g .coda b{color:var(--testo);font-weight:600}
+.riga-g .segno{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:10px;letter-spacing:.8px;text-transform:uppercase;font-weight:600;
+}
+.riga-g .segno .ico{font-size:13px}
+.riga-g .segno.buono{color:var(--buono)}
+.riga-g .segno.attesa{color:var(--attesa)}
+.riga-g .segno.fuori{color:var(--fuori)}
+
+.scala{
+  display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;
+  border-top:1px solid var(--bordo);font-size:10px;color:var(--tenue);
+}
+
+.numeri-tab{margin-top:12px}
+.numeri-tab summary{
+  display:inline-flex;align-items:center;gap:7px;cursor:pointer;list-style:none;
+  font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;font-weight:600;color:var(--tenue);
+  padding:5px 11px;border:1px solid var(--bordo);border-radius:999px;transition:all .16s;
+}
+.numeri-tab summary::-webkit-details-marker{display:none}
+.numeri-tab summary:hover{color:var(--ink);border-color:var(--bordo-vivo);background:var(--velo)}
+.numeri-tab summary .ico{font-size:14px}
+.numeri-tab[open] summary{margin-bottom:12px}
+
+/* ── andamento a colonnine: una serie per riga ── */
+.legenda-g .periodi{font-size:10.5px;color:var(--tenue);letter-spacing:.2px}
+.riga-s{
+  display:grid;grid-template-columns:minmax(96px,168px) 1fr auto;gap:4px 14px;
+  align-items:center;padding:9px 10px;border-radius:9px;transition:background .16s;
+}
+.riga-s:hover{background:var(--velo)}
+.riga-s .etic{font-size:12.5px;font-weight:600}
+.colonnine{display:flex;align-items:flex-end;gap:5px;height:52px;max-width:260px}
+.colonnine .col{
+  flex:1;max-width:22px;border-radius:3px 3px 0 0;background:rgba(255,255,255,.16);
+  transition:background .16s;
+}
+.colonnine{position:relative}
+.colonnine .col.ultima{background:linear-gradient(180deg, var(--accento), rgba(239,139,82,.55))}
+.colonnine .col.ultima.ok{background:linear-gradient(180deg, var(--buono), rgba(87,195,144,.5))}
+.colonnine .col.ultima.ko{background:linear-gradient(180deg, var(--fuori), rgba(240,128,107,.5))}
+.colonnine .mira{
+  position:absolute;left:0;right:0;height:0;border-top:1px dashed rgba(255,255,255,.45);
+  pointer-events:none;
+}
+.riga-s:hover .colonnine .col{background:rgba(255,255,255,.24)}
+.riga-s:hover .colonnine .col.ultima{background:linear-gradient(180deg, var(--accento), rgba(239,139,82,.7))}
+.riga-s .val{font-size:13px;font-weight:600;text-align:right}
+.riga-s .coda{grid-column:2 / -1;font-size:10.5px;color:var(--tenue)}
+.andamento{display:inline-flex;align-items:center;gap:5px}
+.andamento .ico{font-size:14px}
+/* la freccia dice solo da che parte va: se salire sia un bene lo dice
+   il parametro, non il grafico */
+.andamento{color:var(--tenue)}
+.andamento b{color:var(--testo)}

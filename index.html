@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Console SB · prototipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0&display=swap">
+<link rel="stylesheet" href="assets/stile.css">
+</head>
+<body>
+
+<div class="telaio">
+
+  <aside class="flotta vetro">
+    <div class="insegna">
+      <div class="riga">
+        <span class="sigla">SB</span>
+        <span class="nome">Console <span>della rete</span></span>
+      </div>
+      <div class="chi"><span class="ico">person</span> Simone Braghetta · Roma</div>
+    </div>
+
+    <div class="polso" id="polso"></div>
+    <div class="polso-dida" id="polso-dida"></div>
+
+    <div class="setaccio">
+      <span class="ico">search</span>
+      <input id="setaccio" type="search" placeholder="Cerca locale, zona, titolare" aria-label="Cerca">
+    </div>
+
+    <div class="filtri" id="filtri">
+      <button type="button" data-f="tutti" aria-pressed="true">Tutti</button>
+      <button type="button" data-f="fuori" aria-pressed="false">Fuori parametro</button>
+      <button type="button" data-f="attesa" aria-pressed="false">Attenzione</button>
+      <button type="button" data-f="buono" aria-pressed="false">In linea</button>
+    </div>
+
+    <div class="lista" id="lista"></div>
+    <p class="avviso">Prototipo. Locali, nomi e numeri sono inventati:
+      serve a far vedere come funziona il sistema.</p>
+  </aside>
+
+  <main class="dossier">
+    <div class="banda" id="banda"></div>
+    <div class="linguette vetro" id="linguette" role="tablist"></div>
+    <div class="lastra" id="area"></div>
+  </main>
+
+</div>
+
+<div class="bolla" id="bolla" role="status"></div>
+<script type="module" src="assets/app.js"></script>
+</body>
+</html>

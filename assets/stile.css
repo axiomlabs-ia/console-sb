@@ -191,7 +191,12 @@ body::after{
 .targa.spenta{background:var(--velo);color:var(--tenue);border-color:var(--bordo)}
 
 /* ═══ dossier ═══ */
+/* Gli elementi di una griglia non scendono sotto il loro contenuto se
+   non glielo si dice: senza questo la barra delle linguette allarga
+   tutta la colonna e il telefono va in scroll orizzontale. */
+.telaio > *{min-width:0}
 .dossier{min-width:0;display:grid;gap:18px}
+.dossier > *{min-width:0}
 
 .banda{position:relative;min-height:268px;overflow:hidden;border-radius:var(--r-g);
   border:1px solid var(--bordo);box-shadow:var(--ombra)}
@@ -276,7 +281,11 @@ body::after{
 .numeri span{font-size:11.5px;color:var(--tenue);display:block;margin-top:7px}
 
 /* ═══ tabelle ═══ */
-.tabella{background:var(--velo);border:1px solid var(--bordo);border-radius:var(--r-b);overflow:hidden}
+/* Le tabelle larghe scorrono dentro il loro riquadro: senza questo
+   allargano la pagina e il telefono rimpicciolisce tutto il resto. */
+.tabella{background:var(--velo);border:1px solid var(--bordo);border-radius:var(--r-b);
+  overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tabella table{min-width:max-content}
 table{width:100%;border-collapse:collapse;font-size:12.5px}
 th{
   text-align:left;font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--tenue);
@@ -601,3 +610,78 @@ svg{display:block;width:100%;height:auto;overflow:visible}
    il parametro, non il grafico */
 .andamento{color:var(--tenue)}
 .andamento b{color:var(--testo)}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Telefono.
+
+   Sotto i 560 pixel la testata smette di essere una sovrimpressione e
+   torna a impilarsi: sullo schermo stretto il titolo finiva sotto la
+   targa dello stato. Le righe dei grafici si spezzano in due, così la
+   barra ha lo spazio per dire qualcosa invece di essere un trattino.
+   ═══════════════════════════════════════════════════════════════════ */
+@media(max-width:560px){
+  .telaio{padding:11px;gap:12px}
+  .area{padding:18px 15px 22px}
+  .cause{padding:14px 15px 18px}
+  .diagnosi .capo{padding:18px 16px}
+  .prove{padding:0 15px 18px}
+
+  /* testata: prima lo stato, poi il nome, poi i numeri */
+  .banda{min-height:0}
+  .banda::after{background:linear-gradient(175deg, rgba(14,16,19,.6), rgba(14,16,19,.9))}
+  .banda .monogramma{font-size:150px;bottom:-8%;opacity:.7}
+  /* relative, non static: lo z-index vale solo su un elemento
+     posizionato, altrimenti la velatura della testata li copre */
+  .banda .angolo{position:relative;top:auto;right:auto;padding:16px 16px 0;
+    justify-content:space-between;gap:8px}
+  .banda .sopra{position:relative;inset:auto;padding:12px 16px 18px}
+  .banda h1{font-size:25px;letter-spacing:-.6px;margin-bottom:6px}
+  .banda .sotto{font-size:12px;line-height:1.55}
+  .banda .cifre{margin-top:13px;gap:7px}
+  .banda .cifra{padding:7px 12px;gap:8px}
+  .banda .cifra b{font-size:15px}
+  .sigillo{padding:5px 6px 5px 12px}
+
+  /* due quadranti per riga, corone più piccole */
+  .quadranti{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+  .quadrante{padding:13px 8px 12px}
+  .quadrante svg{width:96px;height:96px}
+  .quadrante .dentro{top:13px;height:96px}
+  .quadrante .dentro b{font-size:17px}
+  .quadrante .nome{font-size:11.5px}
+  .quadrante .atteso{font-size:10px}
+  .quadrante .verdetto{font-size:9px;letter-spacing:.5px;margin-top:7px}
+  .quadrante.aperto::after{bottom:-12px}
+
+  /* grafici: etichetta sopra, barra e numero sotto */
+  .riga-g,.riga-s{grid-template-columns:1fr auto;gap:5px 10px;padding:9px 8px}
+  .riga-g .etic,.riga-s .etic{grid-column:1 / -1;font-size:12px}
+  .riga-g .val,.riga-s .val{font-size:12.5px}
+  /* la coda passa sotto tutto: se resta nella colonna del numero la
+     allarga e alla barra non rimane spazio */
+  .riga-g .coda,.riga-s .coda{grid-column:1 / -1;gap:10px;font-size:10px}
+  .colonnine{height:44px;max-width:none}
+
+  /* il grafico dell'andamento tiene la sua larghezza e scorre, invece
+     di rimpicciolire le scritte fino a non leggerle */
+  .tavola{overflow-x:auto}
+  .tavola svg{min-width:520px;display:block}
+
+  /* il resto che stava stretto */
+  .numeri{grid-template-columns:1fr 1fr}
+  .numeri b{font-size:20px}
+  .settimana{grid-template-columns:repeat(4,1fr)}
+  .causa{grid-template-columns:1fr;gap:4px}
+  .causa .peso{text-align:left;display:flex;align-items:baseline;gap:7px}
+  .causa .peso span{margin-top:0}
+  .conto .grande{font-size:32px}
+  .flussi{grid-template-columns:1fr}
+
+  /* dotazione: la targa dello stato scende sotto invece di spingere
+     la riga fuori dallo schermo */
+  .pezzo{grid-template-columns:34px 1fr;gap:6px 12px;padding:14px 15px}
+  .pezzo .targa{grid-column:2;justify-self:start;margin-top:4px}
+  .pezzo .produce{margin-top:11px}
+  .dentro-misure{padding:14px 13px 16px}
+  .tavola{padding:16px 14px 12px}
+}

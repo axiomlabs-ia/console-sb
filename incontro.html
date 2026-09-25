@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Incontri · Console SB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0&display=swap">
+<link rel="stylesheet" href="assets/stile.css">
+<link rel="stylesheet" href="assets/incontro.css">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0e1013">
+<meta name="robots" content="noindex">
+<meta name="description" content="Console SB: la scheda dell'incontro iniziale con il ristoratore.">
+</head>
+<body>
+
+<!-- Accesso: stesse credenziali del gestionale. La pagina è pubblica, i dati no. -->
+<div class="cancello" id="cancello" hidden>
+  <form class="cancello-scheda vetro" id="accesso" autocomplete="on">
+    <div class="insegna-mini"><span class="sigla">SB</span><span>Console <span>della rete</span></span></div>
+    <label for="utente">Utente</label>
+    <input id="utente" name="username" autocomplete="username" required>
+    <label for="parola">Password</label>
+    <input id="parola" name="password" type="password" autocomplete="current-password" required>
+    <button type="submit" class="pulsante pieno" id="entra">Entra</button>
+    <p class="errore" id="errore-accesso" role="alert"></p>
+  </form>
+</div>
+
+<div class="telaio" id="telaio" hidden>
+  <aside class="flotta vetro">
+    <div class="insegna">
+      <div class="riga">
+        <span class="sigla">SB</span>
+        <span class="nome">Incontri <span>con i locali</span></span>
+      </div>
+      <div class="chi"><a class="torna" href="./"><span class="ico">arrow_back</span> Console della rete</a></div>
+    </div>
+    <div class="nuovo">
+      <button type="button" class="pulsante pieno" id="nuovo"><span class="ico">add</span> Nuovo incontro</button>
+    </div>
+    <div class="setaccio">
+      <span class="ico">search</span>
+      <input id="setaccio" type="search" placeholder="Cerca locale o città" aria-label="Cerca">
+    </div>
+    <div class="lista" id="lista"></div>
+    <p class="avviso">La scheda si salva mentre scrivi. Se la connessione cade, resta sul dispositivo e parte appena torna.</p>
+  </aside>
+
+  <main class="dossier">
+    <div class="banda banda-incontro vetro" id="banda"></div>
+    <div class="linguette vetro" id="linguette" role="tablist"></div>
+    <div class="lastra area" id="area"></div>
+  </main>
+</div>
+
+<div class="stato-salva" id="stato-salva" role="status" aria-live="polite"></div>
+<script type="module" src="assets/incontro.js"></script>
+</body>
+</html>

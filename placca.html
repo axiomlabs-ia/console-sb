@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Placca «Timbra qui» · Console SB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<style>
+  /* ============================================================
+     Placca «Timbra qui» (Rete SB, fase 2): A6 da stampare e mettere
+     sulla cassa, col tag NFC incollato dietro al cerchio.
+     Stessa grammatica delle placche del menù: Playfair + Inter,
+     cornice sottile, «Appoggia qui». Il QR è per i telefoni senza NFC.
+     Si apre dalla console: placca.html?nome=<locale>&link=<link del tag>
+     ============================================================ */
+  :root{ --w:105mm; --h:148mm; --bleed:3mm; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ background:#d9d4ca; font-family:'Inter',sans-serif; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  body{ display:flex; flex-direction:column; gap:8mm; align-items:center; min-height:100vh; padding:10mm; }
+  .barra{ font-size:13px; color:#2b2d31; display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center; }
+  .barra button{ font:inherit; font-weight:600; padding:9px 16px; border-radius:999px; border:0; background:#c4622d; color:#fff; cursor:pointer; }
+  .barra label{ display:flex; gap:6px; align-items:center; }
+  .placca{ position:relative; width:calc(var(--w) + var(--bleed)*2); height:calc(var(--h) + var(--bleed)*2); overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.22); }
+  .chiara{ background:#f5f2ee; color:#2b2d31; --acc:#c4622d; --soft:#6b6560; }
+  .scura{ background:#161719; color:#f5f2ee; --acc:#d9773f; --soft:#a8a29a; }
+  .frame{ position:absolute; inset:calc(var(--bleed) + 4mm); border:.5pt solid var(--acc); }
+  .safe{ position:absolute; top:var(--bleed); left:var(--bleed); width:var(--w); height:var(--h); padding:13mm 12mm 11mm; display:flex; flex-direction:column; align-items:center; text-align:center; }
+  .sopra{ font-weight:600; font-size:5.6pt; letter-spacing:2.6pt; text-transform:uppercase; color:var(--acc); text-indent:2.6pt; }
+  .titolo{ font-family:'Playfair Display',serif; font-style:italic; font-weight:500; font-size:34pt; line-height:1; margin-top:3mm; }
+  .bersaglio{ margin-top:8mm; display:flex; flex-direction:column; align-items:center; gap:3mm; }
+  .anello{ width:32mm; height:32mm; border-radius:50%; border:.8pt solid var(--acc); display:flex; align-items:center; justify-content:center; position:relative; }
+  .anello::before{ content:""; position:absolute; inset:2.2mm; border-radius:50%; border:.4pt dashed var(--acc); opacity:.5; }
+  .icona{ width:14mm; color:var(--acc); margin-left:1mm; }
+  .icona svg{ display:block; width:100%; height:auto; }
+  .bersaglio span{ font-weight:600; font-size:5.4pt; letter-spacing:2pt; text-transform:uppercase; color:var(--acc); text-indent:2pt; }
+  .dice{ font-family:'Playfair Display',serif; font-weight:600; font-size:13pt; line-height:1.25; margin-top:7mm; }
+  .cosa{ margin-top:3mm; font-weight:600; font-size:7.6pt; }
+  .cosa i{ font-style:normal; color:var(--acc); padding:0 1mm; }
+  .piede{ margin-top:auto; width:100%; display:flex; align-items:flex-end; justify-content:space-between; padding-top:4mm; }
+  .qr{ display:flex; align-items:flex-end; gap:2.6mm; text-align:left; }
+  .qr-fondo{ width:17mm; height:17mm; padding:1.2mm; background:#fbfbf9; border-radius:.6mm; }
+  .qr-fondo svg{ display:block; width:100%; height:100%; }
+  .qr-t small{ display:block; font-size:5.4pt; color:var(--soft); line-height:1.35; }
+  .firma{ text-align:right; font-size:5.2pt; letter-spacing:1.4pt; text-transform:uppercase; color:var(--soft); line-height:1.5; }
+  .firma b{ display:block; font-family:'Playfair Display',serif; font-size:9pt; letter-spacing:0; text-transform:none; color:inherit; font-weight:600; }
+  .chiara .firma b{ color:#2b2d31; } .scura .firma b{ color:#f5f2ee; }
+  .errore{ background:#fbeae5; color:#8f2f1c; padding:14px 18px; border-radius:10px; font-size:14px; }
+  @page{ size:111mm 154mm; margin:0; }
+  @media print{ html,body{ background:#fff; } body{ display:block; padding:0; min-height:0; } .barra{ display:none; } .placca{ box-shadow:none; break-after:page; } }
+</style>
+</head>
+<body>
+<div class="barra" id="barra">
+  <label><input type="radio" name="colore" value="chiara" checked> Chiara</label>
+  <label><input type="radio" name="colore" value="scura"> Scura</label>
+  <button type="button" onclick="print()">Stampa</button>
+  <span>A6 con 3 mm di abbondanza · il tag NFC va dietro al cerchio</span>
+</div>
+<div id="dove"></div>
+
+<script>
+(function () {
+  var p = new URLSearchParams(location.search), nome = p.get('nome') || '', link = p.get('link') || '';
+  var dove = document.getElementById('dove');
+  // solo i link dell'app del locale: la pagina non stampa indirizzi qualsiasi
+  if (!/^https:\/\/(www\.)?sbfoodconsulting\.com\/app\/\?l=[\w-]{6,16}$/.test(link)) {
+    dove.innerHTML = '<div class="errore">Apri questa pagina dalla console, linguetta «Persone e turni», pulsante «Placca da stampare».</div>';
+    document.getElementById('barra').hidden = true;
+    return;
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var qr = qrcode(0, 'M'); qr.addData(link); qr.make();
+  var svgQr = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+  var icona = '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="5" width="20" height="38" rx="4"/><path d="M20 38h6"/><path d="M36 17a9 9 0 0 1 0 14"/><path d="M40 13a15 15 0 0 1 0 22"/></svg>';
+  function disegna(colore) {
+    dove.innerHTML = '<div class="placca ' + colore + '"><div class="frame"></div><div class="safe">' +
+      '<div class="sopra">' + esc(nome) + '</div>' +
+      '<div class="titolo">Timbra qui</div>' +
+      '<div class="bersaglio"><div class="anello"><div class="icona">' + icona + '</div></div><span>Appoggia il telefono</span></div>' +
+      '<div class="dice">Inizio e fine turno,<br>e la chiusura della sera.</div>' +
+      '<div class="cosa">Scegli il tuo nome<i>·</i>metti il PIN</div>' +
+      '<div class="piede"><div class="qr"><div class="qr-fondo">' + svgQr + '</div><div class="qr-t"><small>Il telefono non legge<br>il tag? Inquadra il codice.</small></div></div>' +
+      '<div class="firma"><b>SB Food Consulting</b>Rete SB</div></div></div></div>';
+  }
+  document.querySelectorAll('[name=colore]').forEach(function (r) { r.addEventListener('change', function () { disegna(r.value); }); });
+  disegna('chiara');
+})();
+</script>
+</body>
+</html>

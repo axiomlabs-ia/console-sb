@@ -1,0 +1,332 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Console SB · acquisti. Stessi vetri e raggi di stile.css e incontro.css:
+   qui solo la zona di caricamento, le schede dei prodotti e le tabelle.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── caricare le fatture ── */
+.carica-fatture{position:relative;flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:var(--r-b);
+  cursor:pointer;border:1px dashed var(--bordo-vivo);background:rgba(255,255,255,.03);transition:border-color .18s,background .18s}
+.carica-fatture:hover,.carica-fatture.sopra{border-color:var(--accento);background:var(--accento-velo)}
+.carica-fatture:focus-within{outline:2px solid var(--accento);outline-offset:2px}
+.carica-fatture input{position:absolute;width:1px;height:1px;opacity:0}
+.carica-fatture .ico{font-size:26px;color:var(--accento)}
+.carica-fatture b{display:block;font-size:13.5px}
+.carica-fatture i{display:block;font-style:normal;font-size:11px;color:var(--tenue)}
+
+/* ── prodotti da collegare ── */
+.aiuto-lista{margin:0 0 16px;color:var(--testo);font-size:12.5px;max-width:78ch}
+.gruppi{display:grid;gap:12px}
+.gruppo{display:grid;gap:14px;padding:16px 18px;border-radius:var(--r-b);background:var(--velo);border:1px solid var(--bordo)}
+.g-testa{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+.g-testa b{display:block;font-size:13.5px;line-height:1.3;word-break:break-word}
+.g-testa span{display:block;font-size:11.5px;color:var(--tenue);margin-top:3px}
+.g-cifre{text-align:right;flex:0 0 auto}
+.g-cifre b{font-size:16px}
+.g-scelta{display:grid;grid-template-columns:minmax(180px,1.4fr) minmax(150px,1.2fr) 110px 150px;gap:10px;align-items:end}
+.g-scelta label{display:grid;gap:5px;font-size:10.5px;letter-spacing:1.1px;text-transform:uppercase;color:var(--tenue);font-weight:600}
+.g-scelta label[hidden]{display:none}
+.g-scelta input,.g-scelta select{font:inherit;font-size:14px;letter-spacing:0;text-transform:none;color:var(--ink);min-height:40px;width:100%;
+  padding:8px 11px;border-radius:10px;background:rgba(0,0,0,.2);border:1px solid var(--bordo)}
+.g-scelta input:focus,.g-scelta select:focus{outline:none;border-color:var(--accento)}
+.g-scelta select option{background:#1b1e23;color:var(--ink)}
+.fattore{display:flex;align-items:center;gap:7px}
+.fattore input{text-align:right}
+.fattore .u{font-style:normal;font-size:13px;color:var(--testo);text-transform:none;letter-spacing:0;min-width:24px}
+.g-azioni{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ── tabelle ── */
+.tab-dati{width:100%;border-collapse:collapse;font-size:13px}
+.tab-dati th{font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--tenue);font-weight:600;text-align:left;
+  padding:10px 12px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--bordo);white-space:nowrap}
+.tab-dati td{padding:10px 12px;border-bottom:1px solid var(--griglia);vertical-align:middle}
+.tab-dati .dx{text-align:right}
+.tab-dati tr.apri{cursor:pointer}
+.tab-dati tr.apri:hover td{background:var(--velo)}
+.tab-dati tr.apri[aria-expanded="true"] td{background:var(--velo-alto)}
+.tab-dati tr.dettaglio > td{padding:0 0 8px;background:rgba(0,0,0,.15)}
+.tab-dati.interna{font-size:12px}
+.tab-dati.interna td{padding:7px 12px}
+.tenue{color:var(--tenue)}
+.tab-dati .targa{font-size:10.5px;padding:2px 8px;margin-left:6px}
+
+@media (max-width:760px){
+  .testa-incontro{flex-direction:column;align-items:stretch}
+  .g-scelta{grid-template-columns:1fr 1fr}
+  .g-scelta label:first-child{grid-column:1 / -1}
+  .g-testa{flex-direction:column}
+  .g-cifre{text-align:left}
+}
+
+/* ═══ pagina «Dati del locale»: parti comuni alle linguette ═══ */
+.link-mini{font:inherit;font-size:12px;background:none;border:0;color:var(--accento);cursor:pointer;padding:0 0 0 4px;text-decoration:underline;text-underline-offset:3px}
+.passi-locale{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.passi-locale div{padding:10px 14px;border-radius:var(--r-b);background:var(--velo);border:1px solid var(--bordo)}
+.passi-locale div.ok{border-color:rgba(87,195,144,.3);background:var(--buono-velo)}
+.passi-locale b{display:block;font-size:20px;line-height:1.1}
+.passi-locale i{font-style:normal;font-size:11px;color:var(--tenue)}
+.sez-testa{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.sez-testa .aiuto-lista{margin:0;flex:1 1 320px}
+.sotto-schede{display:flex;gap:6px;flex-wrap:wrap}
+.sotto-schede button{font:inherit;font-size:12.5px;font-weight:600;min-height:36px;padding:6px 14px;border-radius:999px;cursor:pointer;
+  color:var(--testo);background:var(--velo);border:1px solid var(--bordo);display:inline-flex;align-items:center;gap:6px}
+.sotto-schede button span.num{font-size:11px;color:var(--tenue)}
+.sotto-schede button[aria-pressed="true"]{color:var(--ink);background:var(--accento-velo);border-color:rgba(239,139,82,.45)}
+h3.cat{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--tenue);font-weight:600;margin:26px 0 10px}
+h3.cat:first-child{margin-top:0}
+.nowrap{white-space:nowrap}
+.num.fuori,b.fuori{color:var(--fuori)} .num.buono,b.buono{color:var(--buono)}
+.data-mini{font:inherit;font-size:13px;color:var(--ink);min-height:36px;padding:6px 10px;border-radius:999px;background:var(--velo);border:1px solid var(--bordo);color-scheme:dark}
+
+/* ricettario */
+.piatti{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.card-piatto{font:inherit;text-align:left;color:var(--ink);cursor:pointer;display:grid;gap:8px;padding:14px 16px;border-radius:var(--r-b);
+  background:var(--velo);border:1px solid var(--bordo);transition:border-color .18s,background .18s}
+.card-piatto:hover{border-color:var(--bordo-vivo);background:var(--velo-alto)}
+.card-piatto:focus-visible{outline:2px solid var(--accento);outline-offset:2px}
+.p-nome{font-weight:600;font-size:14px}
+.p-cifre{display:flex;justify-content:space-between;font-size:12px;color:var(--testo)}
+.card-piatto .targa{justify-self:start;font-size:11px}
+.scheda-piatto,.mappa,.movimento{display:grid;gap:16px}
+.sp-testa{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.sp-totale{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.sp-totale > span:first-child{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--tenue)}
+.sp-totale b{font-size:22px}
+.sp-campi{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;align-items:end}
+.sp-campi label,.periodo{display:grid;gap:5px;font-size:10.5px;letter-spacing:1.1px;text-transform:uppercase;color:var(--tenue);font-weight:600}
+.sp-campi label[hidden]{display:none}
+.sp-campi .largo{grid-column:1 / -1}
+.sp-campi input,.sp-campi select,.righe-ricetta select,.righe-ricetta input,.voci select,.periodo select,.riga-inv input{
+  font:inherit;font-size:14px;letter-spacing:0;text-transform:none;color:var(--ink);min-height:40px;width:100%;
+  padding:8px 11px;border-radius:10px;background:rgba(0,0,0,.2);border:1px solid var(--bordo);color-scheme:dark}
+.sp-campi input:focus,.sp-campi select:focus,.righe-ricetta select:focus,.righe-ricetta input:focus,.voci select:focus,.riga-inv input:focus{outline:none;border-color:var(--accento)}
+select option{background:#1b1e23;color:var(--ink)}
+.righe-ricetta td{padding:6px 8px}
+.righe-ricetta .fattore{justify-content:flex-end}
+.righe-ricetta .fattore input{width:110px}
+
+/* vendite */
+.mappa th.scelta{color:var(--accento)}
+.mappa th i{display:block;font-style:normal;font-size:10px;color:var(--buono);letter-spacing:.6px}
+.voci tr.da-fare td:first-child{border-left:3px solid var(--attesa)}
+.voci select{min-height:36px;max-width:320px}
+
+/* inventari */
+.conta-inv{display:grid;gap:12px}
+.righe-inv{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px}
+.riga-inv{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 10px 8px 14px;border-radius:var(--r-b);
+  background:var(--velo);border:1px solid var(--bordo);font-size:13.5px}
+.riga-inv .fattore input{width:96px;text-align:right}
+.riga-inv.evidenzia{border-color:var(--accento);box-shadow:0 0 0 3px var(--accento-velo)}
+.riga-inv input.salvato{border-color:var(--buono)} .riga-inv input.errato{border-color:var(--fuori)}
+.riga-inv input:disabled{opacity:.7}
+.movimento{margin-top:26px;padding-top:6px;border-top:1px solid var(--bordo)}
+
+/* diagnosi */
+.verdetto{padding:22px 24px;border-radius:var(--r-b);display:grid;gap:16px;border:1px solid var(--bordo);background:var(--velo)}
+.verdetto.male{border-color:rgba(240,128,107,.35);background:linear-gradient(135deg,rgba(240,128,107,.12),rgba(240,128,107,.03))}
+.verdetto.bene{border-color:rgba(87,195,144,.35);background:linear-gradient(135deg,rgba(87,195,144,.12),rgba(87,195,144,.03))}
+.verdetto p{margin:0;font-size:clamp(19px,2.4vw,25px);font-weight:600;letter-spacing:-.4px;line-height:1.25;max-width:32ch}
+.cifre-diag{display:flex;gap:26px;flex-wrap:wrap}
+.cifre-diag b{display:block;font-size:24px;line-height:1.1}
+.cifre-diag i{font-style:normal;font-size:11.5px;color:var(--tenue)}
+.cascata{position:relative;display:grid;gap:4px;padding:6px 0 4px}
+.c-riga{display:grid;grid-template-columns:minmax(170px,240px) 1fr 120px;gap:16px;align-items:center;padding:8px 0;border-bottom:1px solid var(--griglia)}
+.c-riga.totale{border-bottom:0;border-top:1px solid var(--bordo-vivo);margin-top:4px}
+.c-nome b{display:block;font-size:13px}
+.c-nome span{display:block;font-size:11px;color:var(--tenue)}
+.c-pista{position:relative;height:22px}
+.barra{position:absolute;top:3px;height:16px;border-radius:5px;min-width:2px}
+.barra.base{background:rgba(255,255,255,.22)}
+.barra.perdita{background:var(--fuori)}
+.barra.guadagno{background:var(--buono)}
+.barra.reale{background:var(--accento)}
+.c-val{text-align:right}
+.c-val b{display:block;font-size:14px}
+.c-val span{font-size:11px;color:var(--tenue)}
+.obiettivo{position:absolute;top:-8px;bottom:-8px;width:0;border-left:1px dashed rgba(255,255,255,.35);pointer-events:none}
+.obiettivo i.a-sinistra{left:auto;right:6px}
+.obiettivo i{position:absolute;top:-14px;left:6px;font-style:normal;font-size:10px;color:var(--testo);white-space:nowrap}
+.spiega{margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--testo);max-width:90ch}
+.spiega b{color:var(--ink)}
+.avvisi{margin:0;padding-left:18px;color:var(--testo);font-size:13px;display:grid;gap:6px}
+.piatti-venduti{display:flex;flex-wrap:wrap;gap:8px}
+.piatti-venduti span{padding:6px 12px;border-radius:999px;background:var(--velo);border:1px solid var(--bordo);font-size:12.5px}
+.piatti-venduti b{margin-right:4px}
+
+@media (max-width:760px){
+  .passi-locale{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .c-riga{grid-template-columns:1fr 92px}
+  .c-pista{grid-column:1 / -1;grid-row:2}
+  .righe-inv{grid-template-columns:1fr}
+}
+
+/* cassa collegata */
+.cassa-box{display:grid;gap:10px;padding:14px 16px;border-radius:var(--r-b);background:var(--velo);border:1px dashed var(--bordo-vivo);margin-bottom:18px}
+.cassa-box.collegata{border-style:solid;border-color:rgba(87,195,144,.35)}
+.cassa-box b{display:block;font-size:13.5px}
+.cassa-box span{font-size:12px;color:var(--tenue)}
+.cassa-box .aiuto-lista{margin:0;font-size:11.5px}
+.cassa-box .largo{flex:1 1 240px;border-radius:10px}
+.cassa-box label.mini{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--tenue)}
+
+/* colonna: il semaforo di ogni locale */
+.polso-rete{padding:4px 22px 10px;font-size:11.5px;color:var(--tenue)}
+.polso-rete b{color:var(--ink)} .polso-rete b.fuori{color:var(--fuori)} .polso-rete b.attesa{color:var(--attesa)}
+.riga-locale .spia.buono{color:var(--buono)} .riga-locale .spia.attesa{color:var(--attesa)}
+.riga-locale .spia.fuori{color:var(--fuori)} .riga-locale .spia.vuoto{color:var(--tenue)}
+
+/* persone e turni */
+.nascosto{display:none!important}
+.link-tag{font-family:'Geist Mono',ui-monospace,monospace;font-size:12px;padding:8px 12px;border-radius:10px;background:rgba(0,0,0,.25);border:1px solid var(--bordo);
+  flex:1 1 280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.quadro-anteprima{display:grid;gap:10px;margin-bottom:22px}
+.quadro-anteprima .aiuto-lista{margin:0}
+.q-frase{margin:0;font-size:18px;font-weight:600;letter-spacing:-.3px}
+tr.spenta td{opacity:.55}
+tr.da-fare td:first-child{border-left:3px solid var(--attesa)}
+.tab-dati tr.totale td{border-top:1px solid var(--bordo-vivo)}
+#tutti-turni{margin:10px 0}
+/* pagina a colonna sola (accessi dei consulenti) */
+.pagina-sola{max-width:1080px;margin:0 auto;padding:18px;display:grid;gap:18px}
+.pagina-sola .area{padding:24px 28px}
+.link-avviso{color:var(--accento);text-decoration:none}
+.link-avviso:hover{text-decoration:underline}
+.tit a.torna{color:var(--accento);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+
+/* documenti d'acquisto: etichette, lettura di PDF e foto, resoconto del caricamento */
+.targa.doc{background:var(--accento-velo);color:var(--accento);border-color:rgba(239,139,82,.3)}
+.targa-cat{display:inline-block;margin-left:6px;font-size:11px;color:var(--tenue);padding:1px 7px;border-radius:6px;border:1px dashed var(--bordo)}
+.doc-info{display:grid;gap:4px;margin:4px 0 10px;padding:10px 12px;border-radius:var(--r-b);background:var(--velo);font-size:12.5px}
+.doc-info p{margin:0}
+.resoconto{margin:0 0 16px;padding:14px 16px;border-radius:var(--r-b);background:var(--velo);border:1px solid var(--bordo);display:grid;gap:10px}
+.resoconto.in-corso{border-color:rgba(239,139,82,.35);background:var(--accento-velo)}
+.rs-testa{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rs-testa b{font-size:14px}
+.rs-testa .tenue{font-size:12px;flex:1 1 220px}
+.rs-testa #rs-chiudi{margin-left:auto}
+.rs-barra{display:block;height:6px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden}
+.rs-barra i{display:block;height:100%;background:var(--accento);border-radius:6px;transition:width .4s ease}
+.gira{animation:gira 1.1s linear infinite;color:var(--accento)}
+@keyframes gira{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.gira{animation:none}.rs-barra i{transition:none}}
+.rs-blocco summary{cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;list-style:none}
+.rs-blocco summary::-webkit-details-marker{display:none}
+.rs-blocco.attesa summary{color:var(--attesa)} .rs-blocco.fuori summary{color:var(--fuori)} .rs-blocco.ok summary{color:var(--buono)}
+.rs-blocco ul{margin:6px 0 2px;padding-left:28px;display:grid;gap:4px;font-size:12.5px;color:var(--tenue)}
+.rs-blocco li b{color:var(--ink,#f4f2ef);font-weight:600;margin-right:4px}
+
+/* «Da guardare»: i documenti letti da PDF e foto da confrontare con la carta */
+.da-guardare{display:grid;gap:14px}
+.doc-guarda{padding:16px 18px;border-radius:var(--r-b);background:var(--velo);border:1px solid rgba(224,173,72,.3);display:grid;gap:12px}
+.dg-testa{display:grid;gap:8px}
+.dg-campi{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:10px}
+.dg-campi label{display:grid;gap:4px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--tenue);font-weight:600}
+.dg-campi input{font:inherit;font-size:14px;letter-spacing:0;text-transform:none;font-weight:500;color:var(--ink);background:rgba(0,0,0,.2);border:1px solid var(--bordo);border-radius:8px;padding:8px 10px;min-width:0}
+.dg-targhe{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12px}
+.dg-dubbi{margin:0;padding:10px 12px;list-style:none;display:grid;gap:6px;border-radius:10px;background:var(--attesa-velo);font-size:13px}
+.dg-dubbi li{display:flex;gap:8px;align-items:flex-start;color:var(--ink)}
+.dg-dubbi .ico{font-size:17px;color:var(--attesa)}
+.dg-dubbi li.nota .ico{color:var(--accento)}
+.dg-righe input.cifra{width:92px;text-align:right;font:inherit;font-variant-numeric:tabular-nums;color:var(--ink);background:rgba(0,0,0,.2);border:1px solid var(--bordo);border-radius:7px;padding:5px 8px}
+.dg-righe input[type=checkbox]{width:18px;height:18px;accent-color:var(--buono)}
+.dg-azioni{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dg-azioni .tenue{flex:1;font-size:12.5px}
+.rs-apri{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:10px;background:var(--attesa-velo);color:var(--ink);font-size:13px}
+.rs-apri > .ico{color:var(--attesa)}
+.rs-apri > span:nth-child(2){flex:1 1 240px}
+.rs-saltati{margin:0;font-size:12px}
+@media (max-width:700px){.dg-campi{grid-template-columns:1fr 1fr}.dg-campi label:first-child{grid-column:1/-1}}
+
+/* «Dossier»: i campi che riempiono Monitoring */
+.dz-gruppo{margin-bottom:18px}
+.dz-griglia{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.dz-campo,.dz-pezzo label,.dz-evento label,.dz-ind-campi label{display:grid;gap:5px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--tenue);font-weight:600}
+.dz-campo input,.dz-campo select,.dz-pezzo input,.dz-pezzo select,.dz-evento input,.dz-evento select,.dz-evento textarea,.dz-ind-campi input{
+  font:inherit;font-size:14px;letter-spacing:0;text-transform:none;font-weight:500;color:var(--ink);background:rgba(0,0,0,.2);
+  border:1px solid var(--bordo);border-radius:8px;padding:9px 11px;min-width:0;width:100%}
+.dz-campo input:focus,.dz-campo select:focus,.dz-pezzo input:focus,.dz-evento textarea:focus,.dz-ind-campi input:focus{outline:none;border-color:var(--accento)}
+.dz-dotazione{display:grid;gap:10px}
+.dz-pezzo{display:grid;grid-template-columns:34px minmax(0,1.3fr) 170px minmax(0,1.6fr);gap:12px;align-items:center;padding:12px 14px;border-radius:var(--r-b);background:var(--velo);border:1px solid var(--bordo)}
+.dz-pezzo > .ico{font-size:22px;color:var(--accento)}
+.dz-pezzo b{display:block;font-size:14px}
+.dz-pezzo .tenue{font-size:12px}
+.dz-evento{display:grid;grid-template-columns:170px 170px 1fr;gap:12px;align-items:end;padding:14px;border-radius:var(--r-b);background:var(--velo);border:1px solid var(--bordo);margin-bottom:16px}
+.dz-evento .largo{grid-column:1/-1}
+.dz-evento .spunta-dz{display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink);font-weight:500}
+.dz-evento .spunta-dz input{width:18px;height:18px;accent-color:var(--accento)}
+.dz-evento button{justify-self:end}
+.dz-storia{display:grid;gap:2px}
+.dz-tappa{display:grid;grid-template-columns:110px 1fr auto;gap:14px;padding:12px 4px;border-bottom:1px solid var(--bordo);align-items:start}
+.dz-tappa .q{font-size:12px;color:var(--tenue);padding-top:2px}
+.dz-tappa b{font-size:13.5px}
+.dz-tappa p{margin:4px 0 0;font-size:13px;color:var(--testo,#bdb8b0);line-height:1.55}
+.dz-tappa.chiave b{color:var(--accento)}
+.dz-tappa.auto{opacity:.7}
+.dz-indicatori{display:grid;gap:10px}
+.dz-ind{padding:12px 14px;border-radius:var(--r-b);background:var(--velo);border:1px solid var(--bordo);display:grid;gap:10px}
+.dz-ind-testa{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.dz-ind-testa .targa{font-size:10.5px;padding:3px 10px}
+.dz-ind-campi{display:grid;grid-template-columns:110px 110px 1fr 1fr;gap:10px}
+.sez-testa .pulsante{text-decoration:none}
+@media (max-width:760px){
+  .dz-pezzo{grid-template-columns:28px 1fr}.dz-pezzo label{grid-column:1/-1}
+  .dz-evento{grid-template-columns:1fr 1fr}
+  .dz-ind-campi{grid-template-columns:1fr 1fr}.dz-ind-campi .largo{grid-column:1/-1}
+  .dz-tappa{grid-template-columns:1fr auto}.dz-tappa .q{grid-column:1/-1}
+}
+
+/* il turno previsto: la settimana tipo nella scheda della persona */
+.orario-sett{grid-column:1/-1;margin:6px 0 4px;padding:14px 16px;border-radius:var(--r-b);background:rgba(0,0,0,.18);border:1px solid var(--bordo);display:grid;gap:6px}
+.os-testa{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:4px}
+.os-testa b{font-size:14px}
+.os-testa span{font-size:12px;color:var(--tenue)}
+.os-giorno{display:grid;grid-template-columns:100px auto auto 1fr;gap:10px;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.os-nome{font-size:13px;font-weight:500}
+.os-fascia{display:inline-flex;align-items:center;gap:6px}
+.os-fascia i{font-style:normal;color:var(--tenue)}
+.os-fascia input{font:inherit;font-size:13.5px;color:var(--ink);background:rgba(0,0,0,.25);border:1px solid var(--bordo);border-radius:7px;padding:6px 8px;width:104px;color-scheme:dark}
+.os-fascia input:focus{outline:none;border-color:var(--accento)}
+.os-ore{text-align:right;font-size:12.5px;color:var(--tenue)}
+.os-totale{display:flex;flex-wrap:wrap;gap:6px 22px;padding-top:8px;font-size:13px;color:var(--tenue)}
+.os-totale b{color:var(--ink);font-size:15px}
+@media (max-width:760px){.os-giorno{grid-template-columns:1fr auto}.os-fascia{grid-column:1/-1}.os-ore{grid-row:1;grid-column:2}}
+.sp-campi .largo-sp{grid-column:1/-1}
+.sp-campi label input.nascosto{display:none}
+.sp-campi label select + input{margin-top:6px}
+.os-oltre{display:inline-flex;align-items:center;gap:6px;color:var(--attesa);font-size:12.5px;flex-basis:100%}
+.os-oltre .ico{font-size:16px}
+
+/* analisi delle vendite (Managing → Vendite) */
+.analisi-vendite{display:grid;gap:10px;padding:14px 16px;border-radius:var(--r-b);background:var(--velo);border:1px solid var(--bordo-vivo);margin-bottom:18px}
+.analisi-vendite .av-testa{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.analisi-vendite .av-testa>div{flex:1;min-width:220px}
+.analisi-vendite .av-testa b{display:block;font-size:13.5px}
+.analisi-vendite .av-testa span:not(.ico){font-size:12px;color:var(--tenue)}
+.analisi-vendite .av-categorie{display:flex;flex-wrap:wrap;gap:6px}
+.analisi-vendite .av-categorie span{font-size:11.5px;padding:4px 9px;border-radius:999px;background:var(--velo);border:1px solid var(--bordo)}
+.analisi-vendite .av-categorie i{font-style:normal;color:var(--tenue)}
+.analisi-vendite details{font-size:12px}
+.analisi-vendite summary{cursor:pointer;color:var(--accento)}
+.analisi-vendite ul{margin:6px 0 0;padding-left:18px;display:grid;gap:3px;max-height:260px;overflow:auto}
+.voci .v-uniti{display:block;font-size:10.5px;color:var(--tenue);margin-top:2px}
+.voci .v-cat{font-size:11.5px}
+.voci .v-auto,.card-piatto .p-auto{font-style:normal;font-size:9.5px;letter-spacing:.8px;text-transform:uppercase;margin-left:6px;padding:1px 6px;border-radius:999px;border:1px solid var(--bordo-vivo);color:var(--tenue)}
+
+/* scorta minima nell'inventario */
+.scorta-inv{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:0 0 14px;font-size:12px}
+.scorta-inv input{width:64px}
+.scorta-inv .sotto-n{color:var(--fuori, #e2735b)}
+.riga-inv .min-inv{display:block;font-size:10.5px;font-weight:600;color:var(--tenue);margin-top:2px}
+.riga-inv.sotto{border-color:rgba(226,115,91,.55)}
+.riga-inv.sotto .min-inv{color:var(--fuori, #e2735b)}
+
+/* la scheda dell'ingrediente (dall'inventario) */
+.riga-inv .nome-inv{all:unset;cursor:pointer;font-weight:600;border-bottom:1px dotted var(--tenue)}
+.riga-inv .nome-inv:hover,.riga-inv .nome-inv:focus-visible{color:var(--accento);border-bottom-color:var(--accento)}
+.scheda-art{width:min(620px,calc(100vw - 32px));max-height:min(80vh,760px);overflow:auto;padding:20px 22px;border-radius:var(--r-b,18px);
+  border:1px solid var(--bordo-vivo,rgba(255,255,255,.14));background:var(--fondo,#1b1d21);color:inherit}
+.scheda-art::backdrop{background:rgba(0,0,0,.55)}
+.scheda-art .sa-testa{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:0 0 10px}
+.scheda-art h3{margin:0 0 3px;font-size:18px}
+.scheda-art h4{margin:16px 0 6px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--tenue)}
+.scheda-art .sa-consumo,.scheda-art .sa-ultima{margin:0;font-size:13px;line-height:1.55}

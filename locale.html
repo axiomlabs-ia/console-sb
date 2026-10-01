@@ -3,17 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Incontri · Console SB</title>
+<title>Managing · Rete SB</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0&display=swap">
 <link rel="stylesheet" href="assets/stile.css">
 <link rel="stylesheet" href="assets/incontro.css">
+<link rel="stylesheet" href="assets/locale.css?v=20261002c">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#0e1013">
 <meta name="robots" content="noindex">
-<meta name="description" content="Console SB: la scheda dell'incontro iniziale con il ristoratore.">
+<meta name="description" content="Console SB: acquisti, ricettario, vendite, inventari e diagnosi del food cost di un locale.">
 </head>
 <body>
 
@@ -35,19 +36,17 @@
     <div class="insegna">
       <div class="riga">
         <span class="sigla">SB</span>
-        <span class="nome">Incontri <span>con i locali</span></span>
+        <span class="nome">Managing <span>i dati dei locali</span></span>
       </div>
       <div class="chi"><a class="torna" href="rete.html"><span class="ico">arrow_back</span> Monitoring</a></div>
-    </div>
-    <div class="nuovo">
-      <button type="button" class="pulsante pieno" id="nuovo"><span class="ico">add</span> Nuovo incontro</button>
     </div>
     <div class="setaccio">
       <span class="ico">search</span>
       <input id="setaccio" type="search" placeholder="Cerca locale o città" aria-label="Cerca">
     </div>
+    <div class="polso-rete" id="polso-rete"></div>
     <div class="lista" id="lista"></div>
-    <p class="avviso">La scheda si salva mentre scrivi. Se la connessione cade, resta sul dispositivo e parte appena torna.</p>
+    <p class="avviso"><a href="rete.html" class="link-avviso">Monitoring</a> · <a href="consulenti.html" class="link-avviso">Accessi</a> · In ordine: fatture, ricettario, vendite della cassa, due inventari. Poi la diagnosi dice dove il locale perde food cost, riga per riga.</p>
   </aside>
 
   <main class="dossier">
@@ -58,6 +57,6 @@
 </div>
 
 <div class="stato-salva" id="stato-salva" role="status" aria-live="polite"></div>
-<script type="module" src="assets/incontro.js"></script>
+<script type="module" src="assets/locale.js?v=20261002c"></script>
 </body>
 </html>

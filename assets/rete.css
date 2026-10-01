@@ -1,0 +1,74 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Monitoring: gli stili del prototipo (stile.css) più le poche cose che
+   servono ai dati veri: indicatori ancora senza dato, note del consulente,
+   tappe della storia lette dai dati.
+   ═══════════════════════════════════════════════════════════════════ */
+.link-mini{font:inherit;font-size:12px;background:none;border:0;color:var(--accento);cursor:pointer;padding:0 0 0 4px;text-decoration:underline;text-underline-offset:3px}
+.riga-locale .spia.buono{color:var(--buono)} .riga-locale .spia.attesa{color:var(--attesa)}
+.riga-locale .spia.fuori{color:var(--fuori)} .riga-locale .spia.vuoto{color:var(--tenue)}
+
+/* i quadranti, raggruppati */
+.gruppo-tit{margin:18px 0 10px;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--tenue);font-weight:600}
+.gruppo-tit:first-of-type{margin-top:4px}
+.quadranti{grid-template-columns:repeat(auto-fill,minmax(158px,1fr));margin-bottom:12px}
+.quadrante .dentro{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.quadrante .dentro i{font-style:normal;font-size:10px;color:var(--tenue);letter-spacing:0}
+.quadrante .atteso{text-align:center;max-width:150px;line-height:1.35}
+.quadrante.vuoto{opacity:.6}
+.quadrante.vuoto:hover{opacity:.9}
+.quadrante.vuoto .dentro b{color:var(--tenue)}
+.quadrante.vuoto .verdetto{color:var(--tenue)}
+
+/* note del consulente e dati che mancano */
+.nota-consulente{margin-bottom:10px}
+.nota-consulente b .ico{color:var(--accento)}
+.manca{color:var(--tenue);font-style:italic;font-size:12px}
+.flusso.spento{opacity:.55}
+.flusso em{font-style:normal;color:var(--tenue)}
+.pezzo em.auto{font-style:normal;color:var(--tenue);font-size:11px}
+.tappa.auto .t{color:var(--tenue);font-weight:500}
+.tappa.auto::before{background:rgba(255,255,255,.18);box-shadow:none}
+.cella .u{font-size:12px;color:var(--tenue);margin-left:4px;font-weight:500}
+.numeri .cella span .num,.numeri .cella b .u{display:inline}
+/* magazzino: la giacenza stimata */
+.avviso-mag{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border-radius:var(--r-b);margin:14px 0 0;font-size:13px;line-height:1.55}
+.avviso-mag p{margin:0}
+.avviso-mag.attesa{background:var(--attesa-velo);border:1px solid rgba(224,173,72,.3)} .avviso-mag.attesa .ico{color:var(--attesa)}
+.avviso-mag.fuori{background:var(--fuori-velo);border:1px solid rgba(240,128,107,.3)} .avviso-mag.fuori .ico{color:var(--fuori)}
+.tabella.scorre{overflow-x:auto}
+table.giacenze{width:100%;border-collapse:collapse;font-size:13px}
+table.giacenze th{font-size:10.5px;letter-spacing:1.1px;text-transform:uppercase;color:var(--tenue);font-weight:600;text-align:left;padding:10px 12px;border-bottom:1px solid var(--bordo);white-space:nowrap}
+table.giacenze td{padding:10px 12px;border-bottom:1px solid var(--bordo);white-space:nowrap}
+table.giacenze .n{text-align:right;font-variant-numeric:tabular-nums}
+table.giacenze tr.neg td{color:var(--fuori)}
+table.giacenze .tenue-t{color:var(--tenue);white-space:normal;max-width:280px}
+.targa.mini{font-size:9.5px;padding:2px 7px;margin-left:6px;vertical-align:1px}
+/* dove si guarda e dove si inserisce il dato di un anello */
+.pannello-ind{margin:6px 0 22px;scroll-margin-top:18px}
+.riferimenti{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin:14px 0}
+.vai-rif{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--r-b);background:var(--velo);border:1px solid var(--bordo);color:var(--ink);text-decoration:none;font:inherit;text-align:left;cursor:pointer;transition:background .18s,border-color .18s}
+.vai-rif:hover{background:var(--velo-alto);border-color:rgba(239,139,82,.45)}
+.vai-rif:focus-visible{outline:2px solid var(--accento);outline-offset:2px}
+.vai-rif .ico{color:var(--accento);font-size:20px}
+.vai-rif small{display:block;font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--tenue);font-weight:600}
+.vai-rif b{font-size:14px;font-weight:600}
+.quadrante.vuoto .dentro b.mostra{font-size:17px;color:var(--testo)}
+.quadrante.vuoto:has(b.mostra){opacity:.85}
+/* il dato che manca, preciso, al posto di «manca il dato»: si legge e si capisce dove andare */
+.quadrante.vuoto .verdetto{color:var(--attesa);text-align:center;justify-content:center;line-height:1.35;max-width:100%;flex-wrap:wrap}
+
+/* la barra delle domande ai dati (prefisso dom-: stile.css del prototipo ha già classi generiche) */
+.dom-barra{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:12px 16px;margin:0 0 16px;border-radius:var(--r-b, 18px)}
+.dom-barra>.ico{color:var(--accento);font-size:20px}
+.dom-barra input{min-width:0;width:100%;padding:11px 14px;border-radius:12px;border:1px solid var(--bordo, rgba(255,255,255,.12));background:rgba(0,0,0,.18);color:inherit;font:inherit;font-size:14px}
+.dom-barra input:focus{outline:none;border-color:var(--accento)}
+.dom-risposta{grid-column:1 / -1;font-size:13.5px;line-height:1.55}
+.dom-risposta:empty{display:none}
+.dom-nota{margin:0;font-size:11.5px;color:var(--tenue)}
+.dom-nota .ico{font-size:14px;vertical-align:-2px}
+.dom-domanda{margin:0 0 6px;font-size:11.5px;color:var(--tenue);font-style:italic}
+.dom-testo{white-space:normal}
+.dom-errore{margin:0;color:var(--attesa)}
+@media (max-width:640px){.dom-barra{grid-template-columns:1fr auto}.dom-barra>.ico{display:none}}
+.dom-testo p{margin:0 0 6px}
+.dom-testo ul{margin:2px 0 8px;padding-left:20px;display:grid;gap:3px}

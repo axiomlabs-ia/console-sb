@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consulenti · Console SB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0&display=swap">
+<link rel="stylesheet" href="assets/stile.css">
+<link rel="stylesheet" href="assets/incontro.css">
+<link rel="stylesheet" href="assets/locale.css">
+<link rel="icon" href="favicon.ico" sizes="any">
+<meta name="theme-color" content="#0e1013">
+<meta name="robots" content="noindex">
+</head>
+<body>
+<!-- Accessi personali dei consulenti alla console della rete.
+     Li gestisce solo chi entra con la chiave admin (Simone): i consulenti entrano
+     con email e password, e un accesso si toglie senza toccare gli altri. -->
+<div class="cancello" id="cancello" hidden>
+  <form class="cancello-scheda vetro" id="accesso">
+    <div class="insegna-mini"><span class="sigla">SB</span><span>Console <span>accessi</span></span></div>
+    <label for="utente">Utente amministratore</label>
+    <input id="utente" autocomplete="username" required>
+    <label for="parola">Password</label>
+    <input id="parola" type="password" autocomplete="current-password" required>
+    <button type="submit" class="pulsante pieno" id="entra">Entra</button>
+    <p class="errore" id="errore-accesso" role="alert"></p>
+  </form>
+</div>
+
+<main class="pagina-sola" id="telaio" hidden>
+  <div class="banda banda-incontro vetro">
+    <div class="testa-incontro"><div><span class="tit"><a class="torna" href="locale.html"><span class="ico">arrow_back</span> La rete</a></span>
+      <h1>Accessi alla console</h1>
+      <div class="sotto">Ognuno entra con la sua email e la sua password. I consulenti modificano i dati dei locali; la direzione guarda la rete e non modifica niente. Solo l'amministratore crea e toglie gli accessi.</div></div></div>
+  </div>
+  <div class="lastra area" id="area"></div>
+</main>
+<div class="stato-salva" id="stato-salva" role="status" aria-live="polite"></div>
+
+<script type="module">
+const API = (() => { try { return localStorage.getItem('sb_rete_api'); } catch (e) { return null; } })() || 'https://web-production-f3794.up.railway.app';
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let TOKEN = (() => { try { return localStorage.getItem('sb_rete_token') || ''; } catch (e) { return ''; } })();
+
+async function api(p, opz = {}) {
+  const r = await fetch(API + p, { ...opz, headers: { 'X-Admin-Token': TOKEN, 'Content-Type': 'application/json' } });
+  const d = await r.json().catch(() => null);
+  if (r.status === 401 || r.status === 403) { mostraAccesso(r.status === 403 ? 'Serve l\'accesso amministratore (utente, non email).' : ''); throw new Error(d?.error || 'Accesso'); }
+  if (!r.ok) throw new Error(d?.error || 'Errore ' + r.status);
+  return d;
+}
+function avviso(t, errore) {
+  const el = $('#stato-salva'); el.className = 'stato-salva ' + (errore ? 'errore' : 'salvato');
+  el.innerHTML = `<span class="ico">${errore ? 'error' : 'check_circle'}</span> ${esc(t)}`; setTimeout(() => { el.innerHTML = ''; }, 4000);
+}
+function mostraAccesso(msg) { $('#telaio').hidden = true; $('#cancello').hidden = false; $('#errore-accesso').textContent = msg || ''; }
+$('#accesso').addEventListener('submit', async e => {
+  e.preventDefault();
+  try {
+    const r = await fetch(API + '/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: $('#utente').value.trim(), password: $('#parola').value }) });
+    const d = await r.json();
+    if (!r.ok || !d.token) throw new Error(d.error || 'Credenziali non valide');
+    TOKEN = d.token; try { localStorage.setItem('sb_rete_token', TOKEN); } catch (x) {}
+    $('#parola').value = ''; avvia();
+  } catch (x) { $('#errore-accesso').textContent = x.message; }
+});
+
+async function avvia() {
+  let lista;
+  try { lista = await api('/api/rete/consulenti'); } catch (x) { return; }
+  $('#cancello').hidden = true; $('#telaio').hidden = false;
+  $('#area').innerHTML = `<form class="scheda-piatto" id="nuovo">
+      <div class="sp-campi">
+        <label>Nome<input name="nome" required maxlength="120" placeholder="Nome e cognome"></label>
+        <label>Email<input name="email" type="email" required placeholder="nome@sbfoodconsulting.com"></label>
+        <label>Password iniziale<input name="password" type="text" minlength="10" required placeholder="almeno 10 caratteri" autocomplete="off"></label>
+        <label>Ruolo<select name="ruolo"><option value="consulente">Consulente · modifica i dati</option><option value="direzione">Direzione · solo guarda</option></select></label>
+      </div>
+      <div class="g-azioni"><span class="aiuto-lista" style="flex:1;margin:0">Consegna la password a voce: qui non si rivede.</span>
+        <button type="submit" class="pulsante pieno piccolo"><span class="ico">person_add</span> Aggiungi consulente</button></div>
+    </form>
+    ${lista.length ? `<div class="tabella-scroll" style="margin-top:18px"><table class="tab-dati">
+      <thead><tr><th>Persona</th><th>Ruolo</th><th>Email</th><th>Ultimo accesso</th><th></th></tr></thead>
+      <tbody>${lista.map(c => `<tr class="${c.attivo ? '' : 'spenta'}"><td><b>${esc(c.nome)}</b>${c.attivo ? '' : ' <span class="targa spenta">accesso tolto</span>'}</td><td>${c.ruolo === 'direzione' ? 'Direzione · solo guarda' : 'Consulente'}</td><td>${esc(c.email)}</td>
+        <td class="num">${c.ultimo_accesso ? new Date(c.ultimo_accesso + 'Z').toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' }) : '<span class="tenue">mai</span>'}</td>
+        <td class="dx nowrap"><button type="button" class="pulsante piccolo" data-pw="${c.id}"><span class="ico">key</span> Nuova password</button>
+          <button type="button" class="pulsante piccolo" data-attivo="${c.id}" data-v="${c.attivo ? '0' : '1'}"><span class="ico">${c.attivo ? 'person_off' : 'person'}</span> ${c.attivo ? 'Togli l\'accesso' : 'Ridai l\'accesso'}</button></td></tr>`).join('')}</tbody></table></div>`
+    : '<div class="vuoto-grande">Ancora nessun consulente con un accesso personale.</div>'}`;
+  const f = $('#nuovo');
+  f.addEventListener('submit', async e => {
+    e.preventDefault();
+    try { await api('/api/rete/consulenti', { method: 'POST', body: JSON.stringify({ nome: f.nome.value, email: f.email.value, password: f.password.value, ruolo: f.ruolo.value }) }); avviso('Consulente aggiunto'); avvia(); }
+    catch (x) { avviso(x.message, true); }
+  });
+  document.querySelectorAll('[data-pw]').forEach(b => b.addEventListener('click', async () => {
+    const pw = prompt('Nuova password (almeno 10 caratteri). Le sessioni aperte con la vecchia si chiudono.');
+    if (!pw) return;
+    try { await api('/api/rete/consulenti/' + b.dataset.pw, { method: 'PATCH', body: JSON.stringify({ password: pw }) }); avviso('Password cambiata'); }
+    catch (x) { avviso(x.message, true); }
+  }));
+  document.querySelectorAll('[data-attivo]').forEach(b => b.addEventListener('click', async () => {
+    try { await api('/api/rete/consulenti/' + b.dataset.attivo, { method: 'PATCH', body: JSON.stringify({ attivo: b.dataset.v === '1' }) }); avvia(); }
+    catch (x) { avviso(x.message, true); }
+  }));
+}
+TOKEN ? avvia() : mostraAccesso();
+</script>
+</body>
+</html>

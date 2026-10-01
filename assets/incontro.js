@@ -132,11 +132,15 @@ $('#accesso').addEventListener('submit', async e => {
   const err = $('#errore-accesso'), b = $('#entra');
   err.textContent = ''; b.disabled = true; b.textContent = 'Accesso…';
   try {
-    const r = await fetch(API + '/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: $('#utente').value.trim(), password: $('#parola').value }) });
+    // con l'email entra un consulente col suo accesso; con il nome utente, la chiave admin del gestionale
+    const u = $('#utente').value.trim(), consulente = u.includes('@');
+    const r = await fetch(API + (consulente ? '/api/rete/login' : '/api/admin/login'), { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(consulente ? { email: u, password: $('#parola').value } : { username: u, password: $('#parola').value }) });
     const d = await r.json();
     if (!r.ok || !d.token) throw new Error(d.error || 'Credenziali non valide');
-    TOKEN = d.token; scrivi('sb_rete_token', TOKEN); $('#parola').value = '';
+    TOKEN = d.token; scrivi('sb_rete_token', TOKEN); scrivi('sb_rete_ruolo', d.ruolo || 'admin'); $('#parola').value = '';
+    // la direzione guarda e basta: il suo portale è la vista della rete
+    if (d.ruolo === 'direzione') { location.href = 'rete.html'; return; }
     avvia();
   } catch (x) { err.textContent = x.message === 'Failed to fetch' ? 'Server non raggiungibile: riprova.' : x.message; }
   b.disabled = false; b.textContent = 'Entra';
@@ -442,4 +446,5 @@ async function avvia() {
     if (primo) await apri(primo.id);
   } catch (x) { if (TOKEN) avviso(x.message, true); }
 }
-TOKEN ? avvia() : esci();
+if (TOKEN && leggi('sb_rete_ruolo') === 'direzione') location.replace('rete.html');
+else TOKEN ? avvia() : esci();

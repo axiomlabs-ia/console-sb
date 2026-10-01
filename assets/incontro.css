@@ -45,7 +45,9 @@
 .riga-locale .pc{font-size:11px;font-weight:700;color:var(--testo);background:var(--velo);border-radius:999px;padding:3px 8px}
 
 /* ── testata ── */
-.banda-incontro{padding:24px 28px;display:grid;gap:16px}
+.banda-incontro{padding:24px 28px;display:grid;gap:16px;min-height:0}
+/* la velatura scura della testata della rete serve sopra le sue sfumature: qui coprirebbe il testo */
+.banda-incontro::after{display:none}
 .testa-incontro{display:flex;justify-content:space-between;gap:20px;align-items:center}
 .testa-incontro .tit{margin:0 0 6px}
 .testa-incontro h1{margin:0;font-size:clamp(22px,3vw,30px);letter-spacing:-.5px;line-height:1.1}

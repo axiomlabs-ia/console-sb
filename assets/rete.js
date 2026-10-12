@@ -598,6 +598,7 @@ $('#rr-resoconto').addEventListener('click', async () => {
     if (r.status === 401) { esci(); throw new Error('Accesso scaduto'); }
     if (!r.ok) throw new Error((await r.json().catch(() => null))?.error || 'Errore ' + r.status);
     const html = await r.text();
+    if (mia !== sessione) throw new Error('Sessione chiusa');     // si è usciti mentre arrivava: il resoconto non si mostra
     if (w && !w.closed) {
       // la pagina si scrive nella scheda nuova: niente indirizzo temporaneo che scade, così «Stampa o salva in PDF» funziona sempre
       w.document.open(); w.document.write(html); w.document.close();

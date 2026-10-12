@@ -71,6 +71,7 @@ function esci() {
   for (const id of ['banda', 'linguette', 'area', 'lista', 'polso', 'polso-dida', 'dom-risposta']) { const el = document.getElementById(id); if (el) el.innerHTML = ''; }
   const t = document.getElementById('dom-testo'); if (t) t.value = '';
   const b = document.getElementById('dom-barra'); if (b) b.hidden = true;
+  const ra = document.getElementById('rr-azioni'); if (ra) ra.hidden = true;
   $('#telaio').hidden = true; $('#cancello').hidden = false;
 }
 $('#esci').addEventListener('click', esci);
@@ -139,7 +140,7 @@ async function apri(id, silenzioso) {
     // così una domanda non parte mai per un locale diverso da quello sullo schermo
     // anche le linguette e il dossier di prima: niente da cliccare finché non arriva quello giusto (o dopo un errore)
     D = null; $('#banda').innerHTML = ''; $('#linguette').innerHTML = '';
-    $('#dom-barra').hidden = true; $('#dom-risposta').innerHTML = ''; domandeDi = null;
+    $('#dom-barra').hidden = true; $('#dom-risposta').innerHTML = ''; domandeDi = null; $('#rr-azioni').hidden = true;
   }
   scelto = id;
   const u = new URL(location); u.searchParams.set('locale', id); history.replaceState(null, '', u);
@@ -560,7 +561,7 @@ function formatta(testo) {
 let domandeDi = null;
 function preparaDomande(id) {
   const f = $('#dom-barra');
-  f.hidden = false;
+  f.hidden = false; $('#rr-azioni').hidden = false;
   if (domandeDi === id) return;               // l'aggiornamento automatico non cancella la risposta che si sta leggendo
   domandeDi = id;
   $('#dom-testo').value = '';
@@ -579,6 +580,33 @@ $('#dom-barra').addEventListener('submit', async e => {
   } catch (x) {
     if (scelto === id) out.innerHTML = `<p class="dom-errore"><span class="ico">error</span> ${esc(x.message)}</p>`;
   } finally { b.disabled = false; }
+});
+
+/* ─── il resoconto degli incassi: una pagina del motore, aperta in una scheda nuova ─── */
+const NOTA_RESOCONTO = 'Una pagina con grafici e numeri da stampare o mandare al locale.';
+$('#rr-resoconto').addEventListener('click', async () => {
+  const id = scelto, b = $('#rr-resoconto'), nota = $('#rr-nota'), mia = sessione;
+  if (!id) return;
+  // la scheda si apre subito, al clic: aperta dopo l'attesa il browser la bloccherebbe
+  const w = window.open('', '_blank');
+  if (w) w.document.body.textContent = 'Preparo il resoconto…';
+  b.disabled = true; nota.textContent = 'Preparo il resoconto…';
+  const ferma = new AbortController(), t = setTimeout(() => ferma.abort(), 60000);
+  try {
+    const r = await fetch(`${API}/api/rete/locali/${id}/resoconto`, { headers: { 'X-Admin-Token': TOKEN }, signal: ferma.signal });
+    if (mia !== sessione) throw new Error('Sessione chiusa');
+    if (r.status === 401) { esci(); throw new Error('Accesso scaduto'); }
+    if (!r.ok) throw new Error((await r.json().catch(() => null))?.error || 'Errore ' + r.status);
+    const url = URL.createObjectURL(new Blob([await r.text()], { type: 'text/html' }));
+    if (w && !w.closed) w.location.href = url;
+    else { const a = document.createElement('a'); a.href = url; a.download = 'resoconto-incassi.html'; a.click(); }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    nota.textContent = NOTA_RESOCONTO;
+  } catch (x) {
+    if (w && !w.closed) w.close();
+    const m = x.name === 'AbortError' ? 'Il motore non risponde: riprova tra poco' : x.message;
+    if (scelto === id) nota.textContent = m;
+  } finally { clearTimeout(t); b.disabled = false; }
 });
 
 /* ─── avvio e aggiornamento: i dati li cambia il consulente da un'altra pagina ─── */

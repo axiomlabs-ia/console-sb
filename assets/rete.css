@@ -72,3 +72,8 @@ table.giacenze .tenue-t{color:var(--tenue);white-space:normal;max-width:280px}
 @media (max-width:640px){.dom-barra{grid-template-columns:1fr auto}.dom-barra>.ico{display:none}}
 .dom-testo p{margin:0 0 6px}
 .dom-testo ul{margin:2px 0 8px;padding-left:20px;display:grid;gap:3px}
+
+/* resoconto degli incassi (prefisso rr-: lo stile del prototipo ha classi generiche) */
+.rr-azioni{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:0 0 12px}
+.rr-azioni .pulsante .ico{font-size:18px;vertical-align:-4px}
+.rr-nota{font-size:12px;color:var(--tenue)}

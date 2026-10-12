@@ -597,10 +597,16 @@ $('#rr-resoconto').addEventListener('click', async () => {
     if (mia !== sessione) throw new Error('Sessione chiusa');
     if (r.status === 401) { esci(); throw new Error('Accesso scaduto'); }
     if (!r.ok) throw new Error((await r.json().catch(() => null))?.error || 'Errore ' + r.status);
-    const url = URL.createObjectURL(new Blob([await r.text()], { type: 'text/html' }));
-    if (w && !w.closed) w.location.href = url;
-    else { const a = document.createElement('a'); a.href = url; a.download = 'resoconto-incassi.html'; a.click(); }
-    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    const html = await r.text();
+    if (w && !w.closed) {
+      // la pagina si scrive nella scheda nuova: niente indirizzo temporaneo che scade, così «Stampa o salva in PDF» funziona sempre
+      w.document.open(); w.document.write(html); w.document.close();
+    } else {
+      // scheda bloccata dal browser: il resoconto si scarica come file
+      const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+      const a = document.createElement('a'); a.href = url; a.download = 'resoconto-incassi.html'; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    }
     nota.textContent = NOTA_RESOCONTO;
   } catch (x) {
     if (w && !w.closed) w.close();
